@@ -1,0 +1,60 @@
+{
+    "images": {
+        "image_1.png": {
+            "caption": "Figure 1: Generative agents create believable simulacra of human behavior for interactive applications. In this work, we demon-\nstrate generative agents by populating a sandbox environment, reminiscent of The Sims, with twenty-five agents",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_1/image_1.png"
+        },
+        "image_10.png": {
+            "caption": "Figure 6: The memory stream comprises a large number of observations that are relevant and irrelevant to the agent\u2019s current\nsituation. Retrieval identifies a subset of these observations that should be passed to the language model to condition its\nresponse to the situation",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_9/image_10.png"
+        },
+        "image_11.png": {
+            "caption": "Figure 7: A reflection tree for Klaus Mueller. The agent\u2019s observations of the world, represented in the leaf nodes, are recur-\nsively synthesized to derive Klaus\u2019s self-notion that he is highly dedicated to his research",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_10/image_11.png"
+        },
+        "image_12.png": {
+            "caption": "Figure 8: The full generative agent architecture of gener-\native agents produces more believable behavior than ab-\nlated architectures and the human crowdworkers. Each addi-\ntional ablation reduces the performance of the architecture",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_14/image_12.png"
+        },
+        "image_13.png": {
+            "caption": "Figure 9: The diffusion path for Isabella Rodriguez\u2019s Valentine\u2019s Day party. A total of 12 agents heard about the party at Hobbs\nCafe by the end of the simulation",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_16/image_13.png"
+        },
+        "image_2.png": {
+            "caption": "Figure 2: The Smallville sandbox world, with areas labeled. The root node describes the entire world, children describe areas\n(e",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_5/image_2.png"
+        },
+        "image_3.png": {
+            "caption": "",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_5/image_3.png"
+        },
+        "image_4.png": {
+            "caption": "",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_5/image_4.png"
+        },
+        "image_5.png": {
+            "caption": "",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_5/image_5.png"
+        },
+        "image_6.png": {
+            "caption": "",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_5/image_6.png"
+        },
+        "image_7.png": {
+            "caption": "Figure 3: A morning in the life of a generative agent, John Lin. John wakes up around 6 am and completes his morning routine,\nwhich includes brushing his teeth, taking a shower, and eating breakfast",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_7/image_7.png"
+        },
+        "image_8.png": {
+            "caption": "Figure 4: At the beginning of the simulation, one agent is ini-\ntialized with an intent to organize a Valentine\u2019s Day party.\nDespite many possible points of failure in the ensuring\nchain of events\u2014agents might not act on that intent, might\nnot remember to tell others, might not remember to show\nup\u2014the Valentine\u2019s Day party does in fact occur, with a num-\nber of agents gathering and interacting",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_7/image_8.png"
+        },
+        "image_9.png": {
+            "caption": "Figure 5: Our generative agent architecture. Agents perceive their environment, and all perceptions are saved in a compre-\nhensive record of the agent\u2019s experiences called the memory stream",
+            "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_8/image_9.png"
+        }
+    },
+    "pages": 22,
+    "pdf_filename": "2304.03442.pdf",
+    "summary": "",
+    "title": "Generative Agents: Interactive Simulacra of Human Behavior"
+}

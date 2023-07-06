@@ -1,0 +1,12 @@
+{
+    "images": {
+        "image_1.png": {
+            "caption": "Figure 2: Recurrent memory mechanism. Memory\nis passed to Transformer along input sequence embed-\ndings, and memory output is passed to the next segment",
+            "image_path": "downloads/Scaling_Transformer_to_1M_tokens_and_beyond_with/images/page_2/image_1.png"
+        }
+    },
+    "pages": 9,
+    "pdf_filename": "2304.11062.pdf",
+    "size": 30458,
+    "title": "Scaling Transformer to 1M tokens and beyond with"
+}
