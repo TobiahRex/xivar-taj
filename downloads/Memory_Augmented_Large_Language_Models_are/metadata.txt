@@ -1,7 +1,9 @@
 {
+    "arxiv_number": "2301.04589",
     "images": {},
+    "new_root": "downloads/Memory_Augmented_Large_Language_Models_are",
     "pages": 23,
-    "pdf_filename": "2301.04589.pdf",
+    "pdf_filename": "downloads/2301.04589/2301.04589.pdf",
     "size": 45229,
     "title": "Memory Augmented Large Language Models are"
 }

@@ -1,0 +1,22 @@
+{
+    "arxiv_number": "2110.14936",
+    "images": {
+        "image_1.png": {
+            "caption": "Figure 1: The proposed methodology for this study.\npotential predictive factor",
+            "image_path": "downloads/EXPLORATION_OF_ALGORITHMIC_TRADING_STRATEGIES_FOR/images/page_4/image_1.png"
+        },
+        "image_2.png": {
+            "caption": "Figure 2: The hyperparameter optimisation process proposed in this study.\n3",
+            "image_path": "downloads/EXPLORATION_OF_ALGORITHMIC_TRADING_STRATEGIES_FOR/images/page_6/image_2.png"
+        },
+        "image_3.png": {
+            "caption": "Figure 3: The models calculated pro\ufb01t and loss over time relative to the Bitcoin price as we trade with a 30% risk\ntolerance using its predictions.\n7",
+            "image_path": "downloads/EXPLORATION_OF_ALGORITHMIC_TRADING_STRATEGIES_FOR/images/page_7/image_3.png"
+        }
+    },
+    "new_root": "downloads/EXPLORATION_OF_ALGORITHMIC_TRADING_STRATEGIES_FOR",
+    "pages": 9,
+    "pdf_filename": "downloads/2110.14936/2110.14936.pdf",
+    "size": 35060,
+    "title": "EXPLORATION OF ALGORITHMIC TRADING STRATEGIES FOR"
+}

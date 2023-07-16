@@ -1,0 +1,9 @@
+{
+    "arxiv_number": "2304.11172",
+    "images": {},
+    "new_root": "downloads/The_centaurprogrammer-How_Kasparov\u2019s_AdvancedChess_span_s",
+    "pages": 4,
+    "pdf_filename": "downloads/2304.11172/2304.11172.pdf",
+    "size": 13222,
+    "title": "The centaurprogrammer-How Kasparov\u2019s AdvancedChess span s"
+}

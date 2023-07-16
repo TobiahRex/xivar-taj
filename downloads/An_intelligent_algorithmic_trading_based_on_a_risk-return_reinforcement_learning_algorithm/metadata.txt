@@ -1,0 +1,46 @@
+{
+    "arxiv_number": "2208.10707",
+    "images": {
+        "image_1.png": {
+            "caption": "Figure 1: Actor network structure\nthere are multiple actors. Each actor interacts with\nits respective environment based on the shared neural\nnetwork, accumulating experience and putting it into\nthe shared experience replay memory",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_7/image_1.png"
+        },
+        "image_2.png": {
+            "caption": "Figure 2: Critic network structure\nof return over a period. Total return, computed using\nEq",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_8/image_2.png"
+        },
+        "image_3.png": {
+            "caption": "Figure 3: The general architecture of the proposed model\n\u000fMean\u0000variance model :The mean-variance\nmodel, introduced by Markowitz in 1952, aims to \fnd\nthe best portfolio only by the \frst two moments of cu-\nmulative return. Suppose there are n kinds of assets,\nR= (r1;:::rn)Trepresents the expected return of a\nportfolio,W= (W1;:::Wn)Tis the weight vector, \u0006\nis the covariance vector of return, \u0010is risk aversion\ncoe\u000ecient, 1representsn\u00021 dimensional unit vector,\nwe establish the following optimization model based on\nutility maximization:\nmax U =WTR\u0000\u0010WT\u0006W (30)\ns:t: 1TW= 1 (31)\n5",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_9/image_3.png"
+        },
+        "image_4.png": {
+            "caption": "Figure 4: Average performance for the ETFs portfolio\nFigure 5: Performance of R3L algorithm\n6.3 Sensitive analysis\nIn this paper, delta( \u000e) and zeta(\u0010) are two critical pa-\nrameters that a\u000bect the overall performance of the pro-\nposed algorithm",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_11/image_4.png"
+        },
+        "image_5.png": {
+            "caption": "Figure 5: Performance of R3L algorithm\n6.3 Sensitive analysis\nIn this paper, delta( \u000e) and zeta(\u0010) are two critical pa-\nrameters that a\u000bect the overall performance of the pro-\nposed algorithm",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_11/image_5.png"
+        },
+        "image_6.png": {
+            "caption": "Figure 6: Average performance for the stock portfolio\nexplained by the fact that, although short selling can\nprovide investors with pro\ft opportunities in a bear\nmarket, it also brings more risks. Therefore, it is essen-\ntial to control the scale of short selling appropriately",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_12/image_6.png"
+        },
+        "image_7.png": {
+            "caption": "Figure 7: Impact of delta value on R3L\nTable 4: Sensitive analyse of delta\ndelta TR SD SR1 VAR SR2 AT\n1 9.70% 0",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_13/image_7.png"
+        },
+        "image_8.png": {
+            "caption": "Figure 8: Impact of theta value on R3L\nTable 5: Sensitive analyse of zeta\nzeta TR SD SR1 VAR SR2 AT\n0.5 12",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_14/image_8.png"
+        },
+        "image_9.png": {
+            "caption": "Figure 9: Impact of network structure on R3L\nTable 6: Sensitive analyse of network\nNetwork TR SD SR1 VAR SR2 AT\nGRU 17.82% 0",
+            "image_path": "downloads/Submitted_to_Pisika/images/page_15/image_9.png"
+        }
+    },
+    "new_root": "downloads/Submitted_to_Pisika",
+    "pages": 16,
+    "pdf_filename": "downloads/2208.10707/2208.10707.pdf",
+    "size": 58460,
+    "title": "Submitted to Pisika"
+}

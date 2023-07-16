@@ -1,4 +1,5 @@
 {
+    "arxiv_number": "2304.03442",
     "images": {
         "image_1.png": {
             "caption": "Figure 1: Generative agents create believable simulacra of human behavior for interactive applications. In this work, we demon-\nstrate generative agents by populating a sandbox environment, reminiscent of The Sims, with twenty-five agents",
@@ -53,8 +54,9 @@
             "image_path": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior/images/page_8/image_9.png"
         }
     },
+    "new_root": "downloads/Generative_Agents-Interactive_Simulacra_of_Human_Behavior",
     "pages": 22,
-    "pdf_filename": "2304.03442.pdf",
-    "summary": "",
+    "pdf_filename": "downloads/2304.03442/2304.03442.pdf",
+    "size": 127302,
     "title": "Generative Agents: Interactive Simulacra of Human Behavior"
 }

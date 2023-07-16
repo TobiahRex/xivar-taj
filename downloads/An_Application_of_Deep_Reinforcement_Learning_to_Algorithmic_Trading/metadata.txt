@@ -1,0 +1,30 @@
+{
+    "arxiv_number": "2004.06627",
+    "images": {
+        "image_1.png": {
+            "caption": "Figure 1: Illustration of a trading strategy execution\nIn the following subsection, the algorithmic trading se-\nquential decision-making problem, which shares similari-\nties with other problems successfully tackled by the RL\ncommunity, is casted as an RL problem.\n3",
+            "image_path": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading/images/page_3/image_1.png"
+        },
+        "image_2.png": {
+            "caption": "Figure 2: Reinforcement learning core building blocks\n3.4",
+            "image_path": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading/images/page_4/image_2.png"
+        },
+        "image_3.png": {
+            "caption": "Figure 3: Illustration of the DQN algorithm\n4.1",
+            "image_path": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading/images/page_8/image_3.png"
+        },
+        "image_4.png": {
+            "caption": "",
+            "image_path": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading/images/page_11/image_4.png"
+        },
+        "image_5.png": {
+            "caption": "",
+            "image_path": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading/images/page_11/image_5.png"
+        }
+    },
+    "new_root": "downloads/An_Application_of_Deep_Reinforcement_Learning_to_Algorithmic_Trading",
+    "pages": 19,
+    "pdf_filename": "downloads/2004.06627/2004.06627.pdf",
+    "size": 82809,
+    "title": "An Application of Deep Reinforcement Learning to Algorithmic Trading"
+}

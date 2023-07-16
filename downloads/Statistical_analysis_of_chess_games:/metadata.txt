@@ -1,0 +1,9 @@
+{
+    "arxiv_number": "2304.11425",
+    "images": {},
+    "new_root": "downloads/Statistical_analysis_of_chess_games:",
+    "pages": 10,
+    "pdf_filename": "downloads/2304.11425/2304.11425.pdf",
+    "size": 48254,
+    "title": "Statistical analysis of chess games:"
+}

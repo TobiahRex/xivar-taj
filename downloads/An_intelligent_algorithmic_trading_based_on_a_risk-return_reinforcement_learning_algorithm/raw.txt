@@ -1,0 +1,1251 @@
+Submitted to Pisika
+An intelligent algorithmic trading based on a risk-return
+reinforcement learning algorithm
+Boyi Jin∗1
+1Department of Insurance, Shandong University of Finance and Economic,40 shungeng Road,shizhong
+District, Jinan, 250002, China
+August 30, 2022
+Abstract
+It is a challenging problem to automatically generate trading signals based on historical transaction information
+and the nancial status of assets. This scientic paper proposes a novel portfolio optimization model using
+an improved deep reinforcement learning algorithm. The optimization model's objective function considers
+both a nancial portfolio's risks and returns. The proposed algorithm is based on actor-critic architecture,
+in which the main task of the critic network is to learn the distribution of cumulative return using quantile
+regression, and the actor network outputs the optimal portfolio weight by maximizing the objective function
+mentioned above. Meanwhile, we exploit a linear transformation function to realize asset short selling. Finally,
+A multi-process method, called Ape-x, is used to accelerate the speed of deep reinforcement learning training.
+To validate our proposed approach, we conduct backtesting for two representative portfolios and observe that
+the proposed model in this work is superior to the benchmark strategies.
+Keywords: Deep reinforcement learning; Algorithmic trading; Actor-critic architecture; Trading strategy
+1 Introduction
+Algorithmic trading, which has been widely used in
+the nancial market, is a technique that uses a com-
+puter program to automate buying and selling stocks,
+options, futures, cryptocurrency, etc. Institutional in-
+vestors such as a pension, mutual, and hedge funds
+usually use algorithmic trading to nd the most favor-
+able execution price, reduce the impact of severe mar-
+ket uctuations and improve execution eciency. Al-
+gorithmic trading has a far-reaching eect on the over-
+all eciency and microstructure of the capital market.
+Therefore, asset pricing, portfolio investment, and risk
+measurement may undergo revolutionary changes.
+Classical algorithmic strategies includes arrival
+price strategy[1, 2]; volume weighted average price
+strategy[3, 4]; time-weighted average price strategy[5],
+implementation shortfall strategy[6, 7]; guerrilla
+strategy[8],etc. In recent years, with the rapid devel-
+opment of articial intelligence(AI), more researchers
+have begun utilizing deep reinforcement learning to
+implement algorithmic trading. Deep reinforcement
+learning mainly uses the excellent feature representa-
+tion ability of the deep neural network to t the state,
+action, value, and other reinforcement learning func-
+tions to maximize portfolio return.
+Currently, researchers exploited dierent reinforce-
+ment learning algorithms to study nancial trading
+problems, including the actor-only method(also called
+the value-based method), the critic-only method(also
+∗Corresponding author: 20110983@sdufe.edu.cncalled the policy-based method), and the actor-critic
+method. Nevertheless, we believe these studies are
+not yet mature in practical application for the follow-
+ing reasons. First, most studies maximize the aver-
+age cumulative rewards, which is also the expectation
+of cumulative rewards, of a single asset or a portfo-
+lio by training value function(such as policy gradient)
+or action-value function(such as Q-learning). However,
+these algorithms do not consider the risk and are only
+suitable for investors as a neutral risk type. A large
+number of studies[9{11] have proved that the stock re-
+turn has fat tail characteristics, so the low-probability
+tail risk needs to be highly concerned.
+Additionally, short selling is allowed in many stock
+markets. Short selling can not only make a prot in
+a bear market but also reduce the speculation and
+volatility of the stock market. Although [12] and [13]
+have considered short selling, these studies focus on sin-
+gle asset trading. Most traders generally hold multiple
+securities. Unfortunately, most existing studies do not
+consider the short-selling problem in this common case.
+Finally, the interaction between agent and environ-
+ment is often very time-consuming. However, prot
+opportunities are eeting in the stock market. There-
+fore, how to improve the training speed is also worth
+further study.
+The main contribution of this paper is as follows:
+Firstly, this study proposes a new algorithm for the
+actor-critic framework, called risk-return reinforcement
+learning(R3L). Motivated by the modern portfolio the-
+ory proposed by [14], we construct an optimization
+Samahang Pisika ng Pilipinas 1 Physics Society of the PhilippinesSubmitted to Pisika Boyi Jin
+model based on risk and return. The objective func-
+tion of the optimization model is the weighted sum
+of mean and value at risk(VaR) of portfolio cumula-
+tive return. The main goal of the actor network is to
+learn the portfolio weights by maximizing the objec-
+tive function mentioned above. The primary purpose
+of the critic network is to learn the cumulative port-
+folio return distribution. Inspired by distributional re-
+inforcement learning proposed by [15], we use quantile
+regression to estimate the parameters of the critic net-
+work.
+Secondly, similar to the approach proposed by [16],
+we use a soft-max function to transform the output
+of the actor network into a new variable to meet the
+self-nancing constraint of the portfolio. Then, a lin-
+ear transformation is implemented to convert the vari-
+able mentioned above into the nal output, i.e., port-
+folio weight. This transformation still meets the self-
+nancing constraint. Meanwhile, it can realize short
+selling, control the scale of short selling and prevent
+radical investment strategies.
+Thirdly, we leverage a multi-process algorithm,
+called Ape-x algorithm proposed by [17], to speed up
+the training. Ape-x algorithm separates data collection
+from strategy learning, use multiple parallel agents to
+collect experience data, share a large experience data
+buer, and sends it to learners for learning.
+The rest of this paper is organized as follows. In
+Section 2, we review the related literature and present
+the dierences between our study and previous studies.
+Section 3 describes the denition of our problem, and
+Section 4 introduces our proposed R3L algorithm. In
+Section 5, we detail the setups of our experiments. In
+Section 6, we provide the experiment result. Finally,
+Section 7 presents the conclusions and directions of fu-
+ture work.
+2 Related works
+In this section, we review literature works regarding
+deep reinforcement learning in nancial trading. As
+mentioned in the introduction, the algorithms used in
+nancial trading mainly include the critic-only method,
+the actor-only method, and the actor-critic method.
+Then, we will elaborate on the application of the three
+methods.
+2.1 The critic-only method
+The critic-only method is also called the value-based
+method. DQN(Deep Q-Learning Network) is a well-
+known value-based deep reinforcement learning algo-
+rithm, the core of which is to use a neural network to
+replace the q-label, i. e. the action value function. The
+input of the neural network is state information, and
+the output is the value of each action. Therefore, The
+DQN algorithm can be used to solve the problem of
+continuous state space and discrete action space but
+can not solve the problem of continuous action space.
+DQN and its improved algorithms have received
+extensive attention in the research of nancial trad-
+ing. [18] proposed the league championship algorithm(LCA) that can extract and save various stock trading
+rules according to dierent stock market conditions.
+Every agent in LCA is a sports team member and
+can learn from the weaknesses and strengths of oth-
+ers to improve their performance. They proved that
+their algorithm outperforms Buy-and-Hold and GNP-
+RA strategies. [19]trained an LSTM network using
+double Q-learning [20] and obtained positive rewards in
+a cryptocurrency market with a decreasing tendency.
+[21] proposed a Deep Recurrent Q- Network(DRQN),
+which can process sequences better. They found that
+the proposed algorithm outperformed the buy and hold
+strategy in the S&P500 ETF history dataset. [22] also
+adopted a DRQN-based algorithm, which was applied
+to the foreign exchange market from 2012 to 2017, and
+developed a motion enhancement technology to mit-
+igate the lack of exploration in Q-learning. Experi-
+mental results showed that the annual return of some
+currencies was 60%, with an average of about 10%.
+[23] proposed a novel deep Q-learning portfolio man-
+agement strategy. The framework consists of two main
+components: a group of local agents responsible for
+trading a single asset and a global agent that rewards
+each local agent based on the same reward function.
+The results showed that the proposed approach was
+a promising method for dynamic portfolio optimiza-
+tion. The deep Q-learning network proposed by [24]
+is based on an improved DNN structure consisting of
+two branches, one of which learned action values while
+the other learned the number of shares to take to max-
+imize the objective function. [25] used a LSTM based
+Q network to implement portfolio optimization. In ad-
+dition, to consider the risk factors in portfolio manage-
+ment, the volatility of portfolio return was pulsed to
+the rewards function. [12] discretized the action space
+by xing the trading amount, in which trader can buy
+or sell a specic asset for a xed amount. Short selling
+is not allowed, xed the trading amount for each asset,
+and a mapping function is designed to transform the
+infeasible action into feasible action.
+2.2 Actor-only method
+In the actor-only method, the action taken by the agent
+can be learned directly by a neural network. The ad-
+vantage of this method is that it makes it available for
+continuous action space. [26] constructed a recursive
+deep neural network for environmental perception and
+recursive decision-making. Then, deep learning is used
+for feature extraction and combined with fuzzy learn-
+ing to reduce the uncertainty of input data. Another
+novelty of this paper is a variant of Backpropagation
+through time(BTT) to handle the vanishing gradient
+problem. [27] used Policy Gradient(PG) approach for
+nancial trading. Its main contribution is to analyze
+the advantages of the LSTM network structure over the
+fully connected network and to compare the impact of
+some combination of technical indicators on revenue.
+The drawback of the Actor-only method is that, due
+to the policy strategy, the number of interactions be-
+tween agents and the environment is greatly increased
+Samahang Pisika ng Pilipinas 2Submitted to Pisika Boyi Jin
+compared with a value-based method. As a result, the
+training is very time-consuming.
+2.3 Actor-Critic method
+The actor-critic method contains two parts: an actor,
+which selects action based on probability or certainty,
+and a critic, which evaluates the score of the action
+taken by the actor. The actor-critic method combines
+the advantages of the value-based and policy-based
+methods, which can not only deal with continuous
+and discrete problems but also carry out the one-step
+update to improve learning eciency. [28] exploited
+Gated Recurrent Unit(GRU) to extract nancial fea-
+tures and proposed a critic-only method called Gated
+Deep Q-learning trading strategy(GDQN) and Actor-
+Critic method called Gated Deterministic Policy Gra-
+dient trading strategy(GDPG). Experimental results
+show that GDQN and GDPG outperformed the Tur-
+tle trading strategy[29] and DRL trading strategy[26],
+and the performance of GDPG is more stable than the
+GDQN in the ever-evolving stock market. [30] adopted
+three versions of the RL algorithm based on Deep De-
+terministic Policy Gradient (DDPG), Proximal Policy
+Optimization (PPO), and Policy Gradient (PG) for
+portfolio management. A so-called Adversarial Train-
+ing was proposed to reach a robust result and to con-
+sider possible risks in optimizing the portfolio more
+carefully. [16] proposed a novel reinforcement learn-
+ing algorithm for portfolio optimization using Proxi-
+mal Policy Optimization (PPO). An essential charac-
+teristic of the proposed model is that the number of
+assets is dynamic. Experiments on a cryptocurrency
+market showed that the proposed algorithm outper-
+formed three state-of-the-art algorithms presented by
+[19, 31, 32]. [33] compared the performance of deep
+double Q-learning and proximal policy optimization
+(PPO) to several benchmark execution policies and
+found that PPO realizes the lowest total implemen-
+tation short-fall across exchanges and currency pairs.
+To sum up, these studies used various RL algo-
+rithms for nancial trading problems in a dierent
+settings. The existing literature also has the follow-
+ing problem. First, most literature determines the
+optimal action(portfolio decision) based on the mean
+of the portfolio cumulative returns(for example, Q-
+value) and pays less attention to the risk. Although
+[16, 23, 28] consider the risk factor in the reward func-
+tion, these authors can not measure the risk of portfolio
+cumulative return. Second, short selling is allowed in
+many strategies[13, 24, 26, 34], but the above strate-
+gies consider trading for only one asset, which is often
+inconsistent with the facts; most of the investors of-
+ten hold multiple assets to diversify risk. Although
+some strategies[12, 13, 31] consider trading various as-
+sets, short selling was not allowed, which means that
+investors will not be able to make prots in the bear
+market. Third, the interaction between agent and en-
+vironment is very time-consuming in training. Most
+existing literature does not consider how to improve
+the training speed. Thus, the algorithm proposed inthis paper can eectively overcome the shortcomings
+mentioned above.
+3 Preliminaries
+In this section, we introduce some preliminaries about
+MDP and elaborate state space, action space, and re-
+wards function of the R3L algorithm.
+3.1 Markov decision process
+Markov decision process (MDP) is a mathematical
+model for sequential decision problems, which is used
+to simulate the random strategies and rewards that
+agents can realize in the environment where the system
+state has Markov properties. Portfolio optimization is
+a typical sequential decision problem. Investors dy-
+namically adjust portfolio weights according to market
+information. Thus, we can consider the portfolio allo-
+cation problems as a Markov Decision Process (MDP).
+If a state transition conforms to Markov, the next state
+only depends on its current state and has nothing to
+do with the state before its current state. A nite
+MDP (as considered here) is a four tuple, denoted by
+(S;A;Pa(s;s0);Ra(s;s0)).
+where:
+S is a nite set of states.
+A is a nite set of actions (and As is the nite set
+of actions available from state s).
+Ra(s;s0) is reward function.
+Pa(s;s0) =Pr(st+1=s0jst=s;at=a) is the
+state transition probability.
+The interaction between an agent and nan-
+cial environment will produce a trajectory =
+fs0;a0;R0;s1;a1;R1;:::g.Gtis the discounted cumu-
+lative reward, which the agent can obtain at time t
+expressed as follows:
+Gt=TX
+i=ti tR(si;si+1) (1)
+where2[0;1] is the discounted rate.
+To learn the optimal strategy, we use the value func-
+tion. There are two types of value functions in rein-
+forcement learning: state value function, denoted by
+V(s), and action-value function, denoted by Q(s;a).
+The state value function, shown in Eq.(2), represents
+the expectation of cumulative rewards from a certain
+state s.
+V(s) =E[Gtjst=s] (2)
+The action value function, given in Eq.(3), is the
+expected return obtained after the agent executes an
+action in the current state s.
+Q(s;a) =E[Gtjst=s;at=a] (3)
+3.2 State space
+An important and dicult problem in algorithmic
+trading is the low observability of the market environ-
+ment. The information available to investors is ex-
+Samahang Pisika ng Pilipinas 3Submitted to Pisika Boyi Jin
+tremely limited compared to the complex market en-
+vironment. Therefore, how to deal with this limited
+information is very important. In this paper, the state
+at the period t, denoted by st, consists of three types of
+variables: historical data for the assets( Kt), portfolio
+weights(wt) and trading time step(t). The input of the
+actor network is historical data, and the input of the
+critic network is the concatenation of historical data,
+portfolio weight, and the time index. The historical
+data of the selected portfolio consists of raw data and
+technical indicators. The raw data includes the price
+open, close, high, low, and volume(OCHLV). Techni-
+cal indicators consist of a list of candlestick patterns,
+including bearish, bullish, signicant, hammer, inverse
+hammer, bullish engulng, piercing line, morning star,
+bullish harami, hanging man, shooting star, bearish
+engulng, evening star, three black crows, dark cloud
+cover, bearish harami, doji, spinning top. See [35] for
+details. All historical data can be represented by a ten-
+sor with dimension ngh, where n is the number
+of risky assets, g is the number of features per asset,
+h denotes a window size which is the number of latest
+feature value the agent can observe. Portfolio weight,
+also called portfolio vector, is the percentage of a total
+portfolio represented by a single asset. The rationality
+of adding a time index to the critic network is that it
+reects the time value of money.
+st= (Kt;wt;t)
+wt= (w1t;w2t;:::wn;t)
+Kt= (K1t;K2t;:::Kn;t)(4)
+3.3 Action space
+A problem in algorithmic trading is the low observ-
+ability of the market environment. Compared with the
+complexity of the market environment, the information
+available to investors is extremely limited. Therefore,
+how to deal with little details is very important. At
+each time step t, the agent executes a trading action re-
+sulting from the actor network. Specically, the agent
+needs to redetermine the optimal portfolio weight ac-
+cording to the updated state at the end of each period.
+In addition, to realize short selling, the actor network
+needs to be modied as follows: Firstly, to meet self-
+nancing conditions, we use the softmax function to
+transform the output of the actor network into a new
+variable, denoted by SA=fSA1;SA 2;:::SAng. This
+transformation function is given in Eq.(5).
+SAi=expAi
+Pn 1
+i=0expAi; i = 1;2;:::n (5)
+whereA=fA1;A2;:::Angis the initial output of
+the actor network.
+The default of this transformation is that the port-
+folio weight of each asset is greater than zero, which
+makes short selling impossible. Short selling occurs
+when an investor borrows a security and sells it on the
+open market, planning to repurchase it later for lessmoney. It allows investors to benet not only from a
+bear market but also to use capital proceeds to over-
+weight the portfolio's long-only component of the port-
+folio. Dierent from the existing literature, we realize
+short selling of assets through the following transforma-
+tion in Eq.(6), in which wi(i= 1;2;n) represents the
+proportion of asset i after transformation and (called
+Delta) represents adjustment parameter.
+wi=SAi  1
+n; i = 1;2;:::n (6)
+The self-nancing constraint can be satised
+through the above linear transformation, and this
+transformation can also realize short selling. In par-
+ticular,= 1 indicate no change of portfolio weight,
+= 0 indicate that the portfolio weight of each asset is
+equal to 1=n. Furthermore, in this paper, our portfolio
+includes four risky assets and a risk-free asset(n=5);
+the adjustment parameter is set to 3( = 3), so the
+portfolio weight of a single asset ranges from -40% to
+260%, which means the maximum proportion of short
+selling in total assets is 160%.
+3.4 rewards
+The reward reects the performance of an agent's ac-
+tion. Letassettdenote portfolio value at the end of
+periodt. The reward, denoted by rewardt, is dened
+as portfolio return in period t, computed as the follow-
+ing equation:
+rewardt=assett
+assett 1 1 (7)
+If we do not take into account transaction cost,
+portfolio value at the end of period tequals portfolio
+value at the end of period t 1 plus portfolio return,
+expressed as follows:
+assett=assett 1+assett 1nX
+i=1wi;t 1Ri;t(8)
+If we do not take into account transaction cost,
+portfolio value at the end of period tequals portfolio
+value at the end of period t 1 plus portfolio return,
+expressed as follows
+rewardt=nX
+i=1wi;t 1Ri;t (9)
+If we consider transaction cost, portfolio value at
+the end of period tequalsassett 1plus portfolio return
+minus transaction costs, computed as follows:
+assett=assett 1+assett 1nX
+i=1wi;t 1Ri;t 
+c1nX
+i=1selli;tsellini;tpricei;t 
+c2nX
+i=1buyi;tbuyini;tpricei;t
+(10)
+Samahang Pisika ng Pilipinas 4Submitted to Pisika Boyi Jin
+where:
+c1 and c2 is the transaction cost for selling and
+buying.
+selli;tandbuyi;tare dummy variables, indicating
+whether or not to buy or sell asset iat the end of period
+t.
+buyini;tandsellini;tdenote the trade size of asset
+i at the end of period t, which should be greater than
+or equal to zero.
+In addition, the share of asset i held by an investor
+at the end of period t, represented by assettwi;t,
+satises the following equation:
+assettwi;t=assett 1wi;t 1(1 +Ri;t)+
+buyi;tbuyini;tpricei;t 
+selli;tsellini;tpricei;t(11)
+Obviously, assettwi;tequals to the cumulative
+value ofassett 1wi;t 1in period t plus the shares
+bought(buyi;tbuyini;tpricei;t) minus the shares
+sold(selli;tsellini;tpricei;t). Since it does not make
+sense to buy and sell an asset simultaneously, which in-
+creases transaction costs, one of selli;tandbuyi;tmust
+be zero.
+Ifassett 1,wi;t 1andwi;tare given, we could ad-
+just trading strategies to maximize the portfolio value
+assett. This optimization problem can be formulated
+as a nonlinear programming, the objective function of
+which is to maximize assett, and the decision variables
+areselli;t,buyi;t,buyini;tandsellini;t. The nonlinear
+programming model can be expressed as follows:
+Maximize :assett
+Subject to :
+assettwi;t=assett 1wi;t 1(1 +Ri;t 1) 
+selli;tsellini;tpricei;t+
+buyi;tbuyini;tpricei;t
+assett=assett 1+assett 1nX
+i=1(wi;t 1Ri;t 1) 
+c1nX
+i=1selli;tsellini;tpricei;t 
+c2nX
+i=1buyi;tbuyini;tpricei;t
+selli;tbuyi;t= 0
+selli;t+buyi;t= 1
+sellini;t0
+buyini;t0
+(12)
+4 methodology
+In the rst part of this section, we describe the risk-
+return reinforcement learning(R3L) algorithm in de-
+tail. The second part of this paper introduces the ar-
+chitecture of the neural network. The third part of this
+section is Ape-x.4.1 Proposed algorithm
+The algorithm adopted by this paper is based on actor-
+critic architecture, which includes an actor network and
+a critic network. In addition, each network has its cor-
+responding target network, so the algorithm includes
+four networks, namely the actor network, denoted by
+'(s), and the critical network, denoted by K!(s;a),
+the target actor network, denoted by 0
+'0(s) and the
+target critical network, denoted by K0
+!0(s;a) . In clas-
+sical actor-critic architectures such as A3C, TD3, and
+DDPG, the actor network updates 'by maximizing
+the expectation of cumulative rewards, and the critic
+network updates !by minimizing the error between
+the evaluation value and the target value. The algo-
+rithm proposed in this paper is dierent from the above
+algorithms. Inspired by distributional reinforcement
+learning(DRL) initially proposed by[36], we estimate
+the distribution, rather than the expectation, of cumu-
+lative rewards by the critic network.
+Distributional reinforcement learning is a new kind
+of reinforcement learning algorithm, mainly learning
+the distribution of cumulative rewards. The distribu-
+tional Bellman operator( ) is shown in Eq.(13).
+Z(s;a)D=R(s;a) +Z(s0;a0) (13)
+whereZ(s;a) represents the cumulative return ob-
+tained by taking action ain states, which is a random
+variable,R(s;a) is the rewards function.
+Under Wasserstein metric, [36] proved that the dis-
+tributional Bellman operator is a -contract operator.
+The learning task of DRL is to make the distribution
+Z(s;a) and the target distribution R(s;a) +Z(s0;a0)
+as similar as possible. Following [15], we utilize quan-
+tile regression to estimate network parameters. Quan-
+tile regression, projecting the update of distributional
+Bellman to the quantile distribution, uses a parame-
+terized quantile distribution to approximate the value
+distribution. Let [ 1;2;:::;N], which is the output
+of critic network, denotes the N quantiles of Z(s;a).
+The target distribution is shown in Eq.(14), which can
+be regarded as ground truth.
+0
+j=r+0
+j;8j (14)
+The loss function of critic network is dened in Eq.(15).
+L!=1
+NNX
+i=1NX
+j=1[^i(0
+j i)] (15)
+where
+=j <0jjuj= ( <0)u (16)
+Becausejujis not dierentiable at zero, we take the
+Huber loss function, given in Eq.(17), instead of juj.
+ =8
+><
+>:1
+2u2ifjuj
+(juj 1
+2)otherwise(17)
+Samahang Pisika ng Pilipinas 5Submitted to Pisika Boyi Jin
+Thus, we get a new loss function, also called the
+quantile Huber loss function, expressed as follows:
+
+=j <0j  (18)
+Since portfolio weight is a continuous variable, we
+choose a deterministic policy to generate actions, given
+the Eq.(19).
+a='(s) (19)
+As mentioned in the introduction section, the objective
+function of portfolio optimization is the weighted sum
+of the mean and VaR of portfolio cumulative return.
+If we take N uniform quantiles, the mean of portfolio
+cumulative return, denoted by MR, can be approxi-
+mately equal to the average of quantiles of cumulative
+return, shown in Eq.(20).
+MR =PN
+i=1i
+N(20)
+VaR is used to measure risk in this paper. VaR
+refers to the maximum portfolio loss for a given con-
+dence level in a specic period. It can be described in
+Eq.(21), in which Rpanddenote portfolio cumulative
+return and condence level respectively.
+Prob (Rp VAR) = 1  (21)
+BecauseVaRis a quantile of portfolio cumulative
+return, in this paper, it can also be expressed as the
+following:
+VaR= N(1 ) (22)
+Given the value of N and , we can easily get VaR.
+For example, if N= 100;= 95%,VaR 95%= 5, if
+N= 200;= 90%,VaR 90%= 20.
+According to classical modern portfolio theory,
+portfolio selection aims to construct an optimal port-
+folio model that maximizes expected returns under a
+given acceptable risk level( $). This optimal model is
+shown in the following:
+Max MR
+s:t:VaR=$(23)
+According to the above optimization model, dif-
+ferent risk levels correspond to optimal weights. In
+other words, investors have various portfolio choices,
+which undoubtedly increases the diculty of decision-
+making. To obtain a single optimal solution, The above
+programming problem can be transformed into a single
+objective programming problem through the following
+function:
+U=MR VAR
+=PN
+i=1i
+N+N(1 )(24)
+where(called Zeta) denotes the risk attitude of the
+investor, the higher , the higher the risk aversion of
+investors, and the more conservative investment strate-
+gies will be adopted.
+Exploration is crucial for agents, and deterministic
+strategies cannot explore, so we need to articially addnoise to the output actions. In DDPG algorithm, [37]
+uses Ornstein Uhlenbeck process(OU) as action noise.
+[38] found noise drawn from the OU process oered no
+performance benets, so in this paper, following [38],
+we add Gaussian noise, which is given in Eq.(25), to
+each action. The standard deviation of Gaussian noise
+decreases exponentially as the number of parameter
+updates continues.
+noiseoutputi=actoroutputi+
+clip(N(0;); c;c)(25)
+4.2 Neural network
+We need to model the neural network structure to ex-
+plore functional patterns and extract informative fea-
+tures. Based on the time series nature of stock data,
+the gated recurrent unit(GRU) is utilized to construct
+an informative feature representation. The GRU has
+two gates, i.e., a reset gate and an update gate. These
+two gates determine which information can ultimately
+be used as the output of the gating recurrent unit.
+They are unique in that they can preserve information
+in long-term sequences and will not be cleared over
+time or removed because they are unrelated to pre-
+diction. Intuitively, the reset gate determines how to
+combine the new input information with the previous
+memory. The update gate denes the amount of prior
+memory saved to the current time step. The actor and
+critic network structure is shown in Fig.1 and Fig.2.
+Since GRU, LSTM, and RNN have similar structural
+features, we also used LSTM and RNN networks in the
+sensitivity analysis.
+In addition, Several authors have leveraged Con-
+volutional Neural Networks(CNN) to perform nan-
+cial trading strategy[39, 40], treating the stock trad-
+ing problem as a computer vision application by us-
+ing time-series representative images as input. The
+convolutional neural network has unique advantages in
+speech recognition and image processing with its par-
+ticular structure of local weight sharing. Its design is
+closer to the actual biological neural network. Weight
+sharing reduces the complexity of the network, espe-
+cially the feature that the images of multi-dimensional
+input vectors can be directly input into the network,
+which avoids the complexity of data reconstruction in
+the feature extraction and classication process. Be-
+cause of CNN's robust feature representation ability,
+we studied the impact of CNN on the performance of
+the proposed algorithm in the sensitivity analysis.
+4.3 Distributed framework
+In this paper, to make the training result robust, the
+actor must interact with the environment at dierent
+epochs(or iterations) several times, which is very time-
+consuming. We utilize Ape-X architecture, proposed
+by [17], to speed up the training procedure. This algo-
+rithm decouples acting from learning and decomposes
+the learning process into three parts. In the rst part,
+Samahang Pisika ng Pilipinas 6Submitted to Pisika Boyi Jin
+Figure 1: Actor network structure
+there are multiple actors. Each actor interacts with
+its respective environment based on the shared neural
+network, accumulating experience and putting it into
+the shared experience replay memory. We refer to this
+part, running on CPUs, as acting. In the second part,
+the (single) learner samples data from the replay mem-
+ory and then updates the neural network. We refer to
+this part as the learning part running on a GPU. The
+third part is mainly responsible for data transmission.
+We refer to this part, running on CPUs, as communi-
+cation.
+We use a multiprocessing method to implement
+Ape-X. Specically, there are 22 parallel processes, of
+which 20 are responsible for interacting with the envi-
+ronment, one process is accountable for updating net-
+work parameters, and one process is responsible for
+data exchange. The general architecture of the pro-
+posed method and the pseudocode for the algorithm
+are shown in Fig.3 and Table 1.
+5 Experimental setup
+This section details the setups of our experiments, in-
+cluding datasets, performance measures, benchmark
+models, and technical details. In addition, we also
+need to make the following assumptions: Firstly, all
+transactions are made at the close price at the end of
+each trading period; secondly, the market size is large
+enough that the price of security and market environ-
+ment is not aected by the transactions; Thirdly, since
+frequent adjustment of portfolio weights will generate a
+lot of transaction costs, we adjust the portfolio weights
+once a week; nally, the investment period is set to one
+year.5.1 Datasets
+We experiment with two dierent portfolios. The
+rst portfolio consists of four famous exchange trad-
+ing funds (ETFs) in the US market and a risk-free
+asset. The ETFs portfolio includes SPDR S&P 500
+ETF Trust (SPY), Invesco QQQ Trust ETF(QQQ),
+SPDR Dow Jones Industrial Average ETF(DIA), and
+iShares Russell 2000 ETF(IWM). The second portfo-
+lio consists of stocks of four technology companies and
+a risk-free asset. The four technology companies are
+ORCL, AAPL, TSLA, and GOOG. All data used in
+this paper is available on Yahoo Finance. The trading
+horizon of 13 years is divided into both training and
+testing sets as following:
+Training set : 01=01=2008!31=12=2018:
+testing set : 01=01=2019!31=12=2022:
+5.2 Performance measures
+Risk and return are inseparable in the investment de-
+cision process. Under normal circumstances, the risk
+is highly correlated with the return, and a high re-
+turn means high risk. Therefore, the performance mea-
+sures must include these two aspects. In this article,
+we use four types of performance measures to evaluate
+the proposed trading strategy. The rst type of metric
+measures the protability of the investment strategy,
+i.e., total return. The second type of metrics mea-
+sures investment risk, including variance and VaR. The
+third metric type considers risk and returns, including
+sharpe ratio and Sortino Ratio. The last type of met-
+ric is average turnover. More detail about performance
+measures are as following.
+Total return (TR):The total return is the rate
+Samahang Pisika ng Pilipinas 7Submitted to Pisika Boyi Jin
+Figure 2: Critic network structure
+of return over a period. Total return, computed using
+Eq.(26), includes capital gains, interest, realized distri-
+butions, and dividends.
+TR= (Q[T] Q[0])=Q[0] (26)
+WhereQ[0]is the value of the initial investment; Q[T]is
+the value of the portfolio at the end of the investment
+period.
+Value at risk (VaR ):As mentioned above, VaR
+calculates the maximum loss of a portfolio over a given
+period on specied condence level.
+Sharpe ratio (SR1):The Sharpe ratio, rst pro-
+posed by citesharpe1998sharpe, is a measure of risk-
+adjusted return. This ratio, computed using Eq.(27),
+reects how much the return on risk per unit exceeds
+the risk-free return. If the Sharpe ratio is positive, a
+portfolio's average net value growth rate exceeds the
+risk-free interest rate.
+SR= (E[Rp] Rf)=p (27)
+whereE[Rp] is the expectation of portfolio return, Rf
+is risk-free rate, pis standard deviation of portfolio
+return.
+Sortino ratio (SR2):The Sortino ratio is a risk-
+adjustment metric used to determine the additional re-
+turn for each unit of downside risk. It is similar to the
+Sharpe ratio, but the Sortino ratio uses the lower par-
+tial standard deviation rather than the total standard
+deviation to distinguish between adverse and favorable
+uctuations. The Sortino ratio can be expressed as
+follows:
+SR= (E[Rp] Rf)=DR (28)
+whereDRis the lower partial standard deviation of
+portfolio return.
+Standard deviation (SD):The standard devia-
+tion of the portfolio variance can be calculated as the
+square root of the portfolio variance.Average turnover (AT):Average turnover rep-
+resents the average level of change in portfolio weight,
+which is dened in Eq.(29).
+AT= 1=(2tf)tf 1X
+t=0lX
+i=1jwt+1;i wt;ij (29)
+wheretfis the investment horizon, wt;ldenote weight
+parameter of asset i in investment period t.
+5.3 Benchmark models
+To analyze the eectiveness of the proposed strategy,
+some benchmark strategies, summarised hereafter, are
+selected for comparison.
+Buy and hold (B&H):B&H is used as a bench-
+mark strategy by many researchers compared with
+their proposed strategies. Suppose that the holding
+proportion of all ve assets is 20% in the B&H strat-
+egy and remains unchanged throughout the investment
+period.
+Sell and hold (S&H):S&H is also widely used
+as a benchmark strategy. Assuming that in the S&H
+strategy, the holding proportion of all four risky assets
+is -25%, the proportion of risky-free assets is 200%, all
+of which remain unchanged throughout the investment
+period.
+Random selected (RN):According to the e-
+cient market hypothesis (EMH), all valuable informa-
+tion has been timely, accurate, and fully reected in
+the stock price trend, including the current and future
+value of the enterprise. Without market manipulation,
+investors cannot obtain excess prots higher than the
+market average by analyzing past prices. Any trad-
+ing strategy based on historical data diers from the
+randomly selected strategy.
+Samahang Pisika ng Pilipinas 8Submitted to Pisika Boyi Jin
+Figure 3: The general architecture of the proposed model
+Mean variance model :The mean-variance
+model, introduced by Markowitz in 1952, aims to nd
+the best portfolio only by the rst two moments of cu-
+mulative return. Suppose there are n kinds of assets,
+R= (r1;:::rn)Trepresents the expected return of a
+portfolio,W= (W1;:::Wn)Tis the weight vector, 
+is the covariance vector of return, is risk aversion
+coecient, 1representsn1 dimensional unit vector,
+we establish the following optimization model based on
+utility maximization:
+max U =WTR WTW (30)
+s:t: 1TW= 1 (31)
+5.4 technique detail
+We obtain time window size and other hyper-
+parameters, including replay buer size, batch size, dis-
+count factor, etc., through several rounds of tuning. In
+addition, we need to set some other hyper-parameters
+before training. Suppose the risk-free rate of return is
+2%, and the equivalent weekly return is 0.038%. The
+transaction cost of buying and selling an asset is set
+to 0.02%. Risk aversion parameter( ) and short sell-
+ing parameter( )are set to 0.5 and 3; because these
+two parameters have signicant impacts on investment
+decisions and portfolio returns, we perform sensitiv-
+ity analysis for them in subsection 6.3. The networks
+were trained through the ADAM optimization proce-
+dure with a learning rate of 10 5. The activation func-
+tion is set as the Leaky Relu function. All parameter
+are summarised in Table 2. Finally, the algorithms pro-
+posed in the paper are implemented in python3.7.11
+using pytorch1.10.2 and were run on a PC that con-tains a sixteen-core 2.50GHz CPU with 16GB RAM
+and NVIDIA Geforce RTX 3060 GPU.
+6 Result and discussion
+6.1 The ETFs portfolio
+The rst detailed analysis concerns the execution of
+the proposed algorithm on the ETFs portfolio. Fig.4
+illustrates the average performance of the proposed al-
+gorithms for both the training and testing sets as the
+parameter update step continues. It can be noticed
+that the cumulative return of the ETFs portfolio tends
+to converge in the training and testing set after about
+20000 parameter updates. Moreover, we note that the
+convergence value of the cumulative return in the test-
+ing set is greater than in the training set. On the other
+hand, the risk levels measured by VaR are almost iden-
+tical in training and testing sets. One possible explana-
+tion is that, as pointed out by[41], because the training
+and testing set does not share identical distributions, it
+simply indicates an easier-to-trade and more protable
+market for the testing set. Although the training and
+testing sets do not share identical distributions, the
+training set is representative enough for the R3L algo-
+rithm to achieve good results in testing, so we can still
+use historical data to train the model and then use it
+for future trading. Finally, from the perspective of the
+Sharpe ratio, the performance of the R3L algorithm in
+the testing set is still better than that in the training
+set.
+Fig.5 illustrates the portfolio value trend when ap-
+plying the proposed algorithm and benchmark strate-
+gies in the testing set. We observe that the nal port-
+folio value of the proposed algorithm is 19.51% higher
+Samahang Pisika ng Pilipinas 9Submitted to Pisika Boyi Jin
+Table 1: Pseudocode of the proposed method
+Algorithm1 :R3L
+Input : bath size M, number of actors K, replay size R, exploration constant, learning rate
+1: Initialize network weights ( ';!)
+2: Launch K actors and replicate network weights 'to each actor
+4:fort=1,2,...,T, do
+5: Sample M transitions ( sk;ak;s0
+k) of length N from replay buer
+6: Compute the N quantiles of Z(s;a): [1;k;2;k;:::;N;k] =K!(sk;ak)
+6: Construct the target distributions [ 0
+1;k;0
+2;k;:::0
+N;k] =r+K!(s0
+k;(s0
+k))
+7: Update the parameters of critic network( !) by minimize: loss=1
+MP
+kLk
+!
+8: Update the parameters of critic network( ') by gradient ascend:
+r'1
+MP
+krakU(sk;ak)r'(sk)
+9: Ift= 0 modttarget , update the target network:
+' '+ (1 )'0,! !+ (1 )!0
+10: Ift= 0 modtactor, replicate network weights to the actors
+11:end for
+12:return actor network parameters '
+Actor
+1:repeat
+2: Sample action a='(s) +
+3: Execute action a, observe reward r and state s0
+4: Store (s;a;r;s0) in replay buer
+5:until learner nishes
+Table 2: summary of hyper-parameters
+hyper-parameter value hyper-parameter value
+time window size(n) 60 replay memory 2000
+learning rate(lr) 1e-5 number of parameter update 80000
+batch size 32 discount factor( ) 0.9
+condence level of VaR( ) 0.95 parameter of Huber Loss( ) 1.0
+short selling parameter( ) 3.0 soft update parameter( ) 0.5
+initial money 10000. risk-free rate 3.8e-4
+risk attitude parameter( ) 0.5 num of layer for GRU 2
+Output number of critic network 200 transaction cost 0.0020
+than the S&H strategy, 18.0% higher than the RN
+strategy, 8.1% higher than the MV strategy, and 7.9%
+higher than the B&H strategy.
+Table 3 further presents output performance mea-
+sures results when using the R3L algorithm and the
+benchmark strategies. The R3L algorithm is opti-
+mal regarding risk, return, and overall performance.
+The Sharpe ratio of the proposed algorithm is 19.51%
+higher than the S&H strategy, 18.0% higher than the
+RN strategy, 8.1% higher than the MV strategy, and
+18.0% higher than the B&H strategy. In addition,
+as the stock market was primarily bullish throughout
+the test period, the B&H strategy outperformed other
+benchmark strategies most of the time, while the per-
+formance of the S&H strategy was the worst. The per-
+formance of the RN strategy is abysmal. Since we did
+not consider the company's nancial and internal non-
+public information, it does not mean that the ecient
+market hypothesis is not tenable.6.2 The stock portfolio
+The same detailed analysis is performed on the stock
+portfolio, which shows dierent characteristics com-
+pared to the ETFs portfolio. Fig.6 illustrates the aver-
+age performance of the proposed algorithm for both the
+training and testing sets. We observe that the cumula-
+tive return of the stock portfolio is almost identical in
+the training and testing set after 20000 parameter up-
+dates. At the same time, the risk level(VaR) is higher
+in training sets than in testing sets, which is very dier-
+ent from the ETFs portfolio. Finally, from the sharpe
+ratio perspective, the algorithm's performance in the
+training set is better than in the testing set. Fig.5 illus-
+trates the portfolio value trend of dierent strategies.
+Similar to the ETFs portfolio, the R3L strategy has the
+highest cumulative value at the end of the investment
+period. Table 3 presents output performance measures
+results when using dierent trading strategies. It can
+be noticed that from the perspective of the sharpe ra-
+tio, sortino ratio, and VaR, the R3L algorithm is also
+optimal.
+Samahang Pisika ng Pilipinas 10Submitted to Pisika Boyi Jin
+Figure 4: Average performance for the ETFs portfolio
+Figure 5: Performance of R3L algorithm
+6.3 Sensitive analysis
+In this paper, delta( ) and zeta() are two critical pa-
+rameters that aect the overall performance of the pro-
+posed algorithm. Delta represents the maximum ratio
+of short selling allowed; the larger the delta, the more
+prot opportunities investors have in the bear market.
+Zeta represents investors' risk attitude; the larger zeta
+is, the higher the risk tolerance is, and investors tend to
+adopt more radical investment strategies. Finally, as
+mentioned in subsection 4.2, dierent network struc-
+tures have dierent feature extraction abilities. There-
+fore, it is necessary to analyze the impact of network
+structures on the algorithm's eectiveness to select the
+best one. We conduct the sensitive analysis of delta,
+theta, and network structure on the R3L strategy. The
+performance of the proposed model is evaluated con-
+cerning dierent values for delta, theta, and networkstructures.
+Sensitive analysis of delta :Fig.7 illustrates
+the portfolio value trend when applying the R3L algo-
+rithm with a dierent delta. Portfolio value shows an
+upward trend over time for the ETFs and stock port-
+folios when delta equals 1 and 3. In this case, investors
+can obtain positive returns at the end of the investment
+period. In contrast, in other cases, the portfolio value
+shows signicant volatility over time, and investors re-
+ceive negative returns at the end of the investment pe-
+riod. Table 4 further shows the overall performance of
+the proposed strategy concerning dierent delta values.
+From the perspective of total return, Sharpe ratio, and
+Sortino ratio, = 3 is optimal for the ETFs portfolio,
+and= 1 is optimal for the stock portfolio.
+It can be seen that the maximum amount of short
+selling allowed is not the bigger, the better, which is
+Samahang Pisika ng Pilipinas 11Submitted to Pisika Boyi Jin
+Table 3: Main result
+delta TR SD SR1 VAR SR2 AT
+B&H 5.00% 0.0264 0.0889 0.0374 0.1260 0.0000
+S&H -5.24% 0.0330 -0.0870 0.0419 -0.1392 0.0000
+RN -4.00% 0.0329 -0.0414 0.0435 -0.0541 0.3291
+MV 4.86% 0.0605 0.0968 0.0875 0.1128 0.0929
+R3L 13.32% 0.0266 0.1100 0.0338 0.1681 0.0966
+B&H 10.09% 0.0317 0.0780 0.0203 0.1173 0.0000
+S&H -20.62% 0.0396 -0.1280 0.0575 -0.1657 0.0000
+RN -8.76% 0.0423 -0.0469 0.0584 -0.0536 0.3046
+MV 6.75% 0.0947 0.0893 0.0115 0.1718 0.0929
+R3L 14.47% 0.0298 0.0943 0.0369 0.1571 0.0849
+Figure 6: Average performance for the stock portfolio
+explained by the fact that, although short selling can
+provide investors with prot opportunities in a bear
+market, it also brings more risks. Therefore, it is essen-
+tial to control the scale of short selling appropriately.
+Sensitive analysis of zeta :Fig.8 illustrates
+the portfolio value trend when applying the R3L al-
+gorithm with dierent zeta. Table 5 further shows the
+overall performance of the proposed strategy. It can be
+noticed that the change in portfolio value over time is
+similar for dierent theta. At the end of the investment
+period, the portfolio value is the greatest for the ETFs
+portfolio when theta equals 3. From the Sharpe and
+Sortino ratios perspective, = 3 is also optimal. The
+portfolio value is the greatest for the stock portfolio
+when theta equals 4. From the standpoint of Sharpe
+ratio and Sortino ratio, = 4 is also optimal. Never-
+theless, the VaR is the lowest when theta equals 2 for
+the ETFs and stock portfolios.
+From the above analysis, it can be seen that a higherrisk aversion coecient does not necessarily lead to
+a smaller return and risk level, which contradicts the
+classical portfolio theory. One possible explanation is
+that our algorithm can predict the stock price based on
+historical data to improve the portfolio's return and re-
+duce the risk. To sum up, the algorithm proposed in
+this article can enhance portfolio returns and minimize
+risk.
+Sensitive analysis of network structure :
+Fig. 9 illustrates the portfolio value trend when
+applying the R3L algorithm with a dierent net-
+work structure. It can be observed the changing
+trend of portfolio value is consistent under dierent
+network structures, and only the nal cumulative
+value is slightly dierent. GRU and RNN obtained
+the maximum cumulative value for the ETFs and
+stock portfolios. Table 6 further shows the overall
+performance. We nd that GRU performs best in
+the ETFs portfolio from the perspective of Sharpe
+ratio and Sortino ratio, and RNN performs best in the
+Samahang Pisika ng Pilipinas 12Submitted to Pisika Boyi Jin
+Figure 7: Impact of delta value on R3L
+Table 4: Sensitive analyse of delta
+delta TR SD SR1 VAR SR2 AT
+1 9.70% 0.0266 0.0815 0.0367 0.1177 0.0247
+3 11.16% 0.0270 0.0912 0.0362 0.1391 0.1029
+6 -0.05% 0.0323 0.0060 0.0484 0.0183 0.2362
+9 -3.59% 0.0349 -0.0346 0.0605 -0.0452 0.3681
+15 -15.74% 0.0383 -0.1034 0.0620 -0.1302 0.6059
+1 18.85% 0.0332 0.1117 0.0432 0.1962 0.0288
+3 15.26% 0.0288 0.0991 0.0346 0.1834 0.0941
+6 5.24% 0.0276 0.0220 0.0344 0.0827 0.1995
+9 3.66% 0.0350 0.0300 0.0478 0.0514 0.2721
+15 0.83% 0.0532 -0.0095 0.0845 -0.0170 0.4229
+stock portfolio from the perspective of Sortino ratio.
+In contrast, GRU performs best from the perspective
+of the sharpe ratio.
+7 Conclusion and future work
+We propose a novel deep reinforcement learning algo-
+rithm, called risk-return reinforcement learning(R3L),
+to derive a portfolio trading strategy. Compared with
+the existing literature, the main innovations of this pa-
+per are as the following: rstly, we construct a portfo-
+lio optimization model which is solved by an improved
+deep reinforcement learning algorithm based on actor-
+critic architecture; secondly, we realize short selling
+of portfolio through a linear transformation; thirdly,
+we leverage Ape-x algorithm to speed up the training
+process. Experiments carried out on the performance
+of the R3L algorithm demonstrate that the proposed
+R3L is superior to the traditional benchmark strate-
+gies, such as buy-and-hold, sell-and-hold, random se-
+lect, and mean-variance strategies. In addition, al-
+though short selling allows investors to prot in a bear
+market, the maximum short selling permitted ratio is
+not the bigger, the better. Therefore, investors should
+choose optimal short selling parameters according to
+investment objectives, asset types, and other factors
+to maximize portfolio return. Similarly, we need to
+choose appropriate risk attitude parameters and net-
+work structure to optimize the portfolio's overall per-
+formance.
+Future research can be carried out from the fol-
+lowing aspects: First, according to to[42], VaR is nota coherent risk measure, so we could consider using
+other risk measurements, such as conditional value
+at risk(CVaR), to construct the portfolio optimization
+problem in future research; Second, this paper assumes
+that the trading volume is small compared to the mar-
+ket size, so the trading behavior of a single agent does
+not aect the market environment and stock prices.
+However, the trading behavior, even with a small vol-
+ume, still has a subtle impact on the stock price and
+market environment. How to model the market envi-
+ronment is one of the future research directions; Fi-
+nally, the decision-making process of algorithmic trad-
+ing can be divided into two parts: selecting asset types
+and determining optimal portfolio weight. Therefore,
+subsequent research can be used hierarchical deep re-
+inforcement learning(HDRL) to handle portfolio opti-
+mization problems.
+Conict of interest
+The authors declare that they have no conict of in-
+terests regarding the publication of this paper.
+Acknowledgments
+Here are the acknowledgments. Note the asterisk
+nsection*fAcknowledgments gthat signies that this
+section is unnumbered.
+References
+[1] A. F. Perold, The implementation shortfall: Paper
+versus reality, Journal of Portfolio Management
+Samahang Pisika ng Pilipinas 13Submitted to Pisika Boyi Jin
+Figure 8: Impact of theta value on R3L
+Table 5: Sensitive analyse of zeta
+zeta TR SD SR1 VAR SR2 AT
+0.5 12.58% 0.0267 0.1029 0.0341 0.1576 0.0991
+1.0 5.23% 0.0275 0.0453 0.0383 0.0703 0.1122
+2.0 5.10% 0.0270 0.0486 0.0395 0.0814 0.1141
+3.0 5.26% 0.0305 0.0521 0.0432 0.0854 0.1019
+4.0 7.37% 0.0264 0.0570 0.0401 0.0887 0.0955
+0.5 14.11% 0.0297 0.0898 0.0372 0.1548 0.0979
+1.0 10.53% 0.0281 0.0649 0.0383 0.1169 0.1156
+2.0 18.09% 0.0253 0.1295 0.0344 0.2470 0.0788
+3.0 22.66% 0.0338 0.1236 0.0448 0.2623 0.0867
+4.0 22.83% 0.0351 0.1247 0.0445 0.2450 0.0835
+14, 4 (1988).
+[2] R. Almgren and J. Lorenz, Adaptive arrival price,
+Trading 2007 , 59 (2007).
+[3] S. A. Berkowitz, D. E. Logue, and E. A. Noser Jr,
+The total cost of transactions on the nyse, The
+Journal of Finance 43, 97 (1988).
+[4] A. N. Madhavan and V. Panchapagesan, The rst
+price of the day, The Journal of Portfolio Man-
+agement 28, 101 (2002).
+[5] P. N. Kolm and L. Maclin, Algorithmic trad-
+ing, optimal execution, and dyna mic port folios
+(2011).
+[6] M. Kritzman, Are optimizers error maximizers?,
+The Journal of Portfolio Management 32, 66
+(2006).
+[7] T. Hendershott and R. Riordan, Algorithmic trad-
+ing and the market for liquidity, Journal of Finan-
+cial and Quantitative Analysis 48, 1001 (2013).
+[8] E. Eriksson and A. Swartling, in Human Work
+Interaction Design-HWID2012 (2012), 116{126.
+[9] E. Jondeau and M. Rockinger, Testing for dier-
+ences in the tails of stock-market returns, Journal
+of Empirical Finance 10, 559 (2003).
+[10] I. Tsiakas, Periodic stochastic volatility and fat
+tails, Journal of Financial Econometrics 4, 90
+(2006).
+[11] R. Franke, Applying the method of simulated mo-
+ments to estimate a small agent-based asset pric-
+ing model, Journal of Empirical Finance 16, 804
+(2009).[12] H. Park, M. K. Sim, and D. G. Choi, An intelligent
+nancial portfolio trading strategy using deep q-
+learning, Expert Systems with Applications 158,
+113573 (2020).
+[13] S. Almahdi and S. Y. Yang, A constrained portfo-
+lio trading system using particle swarm algorithm
+and recurrent reinforcement learning, Expert Sys-
+tems with Applications 130, 145 (2019).
+[14] H. Markowitz, Harry m. markowitz, Portfolio se-
+lection, Journal of Finance 7, 77 (1952).
+[15] W. Dabney, M. Rowland, M. Bellemare, and
+R. Munos, in Proceedings of the AAAI Conference
+on Articial Intelligence (2018), vol. 32.
+[16] C. Betancourt and W.-H. Chen, Deep reinforce-
+ment learning for portfolio management of mar-
+kets with a dynamic number of assets, Expert Sys-
+tems with Applications 164, 114002 (2021).
+[17] D. Horgan, J. Quan, D. Budden, G. Barth-
+Maron, M. Hessel, H. Van Hasselt, and D. Silver,
+Distributed prioritized experience replay, arXiv
+preprint arXiv:1803.00933 (2018).
+[18] M. R. Alimoradi and A. H. Kashan, A league
+championship algorithm equipped with network
+structure and backward q-learning for extracting
+stock trading rules, Applied soft computing 68,
+478 (2018).
+[19] S.-J. Bu and S.-B. Cho, in International Confer-
+ence on Intelligent Data Engineering and Auto-
+mated Learning (Springer, 2018), 468{480.
+[20] H. Van Hasselt, A. Guez, and D. Silver, in Pro-
+Samahang Pisika ng Pilipinas 14Submitted to Pisika Boyi Jin
+Figure 9: Impact of network structure on R3L
+Table 6: Sensitive analyse of network
+Network TR SD SR1 VAR SR2 AT
+GRU 17.82% 0.0342 0.1089 0.0457 0.2118 0.0865
+LSTM 8.65% 0.0337 0.0433 0.0531 0.0723 0.1060
+RNN 12.88% 0.0335 0.0660 0.0455 0.1173 0.1093
+COONV2D 10.50% 0.0321 0.0680 0.0355 0.1381 0.1258
+CONV3D 14.33% 0.0352 0.0758 0.0526 0.1584 0.0985
+GRU 14.47% 0.0298 0.0943 0.0369 0.1571 0.0849
+LSTM 7.34% 0.0357 0.0594 0.0534 0.0917 0.1110
+RNN 14.75% 0.0300 0.0907 0.0431 0.2078 0.1125
+CONV2D 3.76% 0.0283 0.0377 0.0326 0.0840 0.1541
+CONV3D 13.67% 0.0360 0.0710 0.0521 0.1460 0.0903
+ceedings of the AAAI conference on articial in-
+telligence (2016), vol. 30.
+[21] L. Chen and Q. Gao, in 2019 IEEE 10th Inter-
+national Conference on Software Engineering and
+Service Science (ICSESS) (IEEE, 2019), 29{33.
+[22] C. Y. Huang, Financial trading as a game: A deep
+reinforcement learning approach, arXiv preprint
+arXiv:1807.02787 (2018).
+[23] G. Lucarelli and M. Borrotti, A deep q-learning
+portfolio management framework for the cryp-
+tocurrency market, Neural Computing and Appli-
+cations 32, 17229 (2020).
+[24] G. Jeong and H. Y. Kim, Improving nancial trad-
+ing decisions using deep q-learning: Predicting the
+number of shares, action strategies, and transfer
+learning, Expert Systems with Applications 117,
+125 (2019).
+[25] Z. Zhang, S. Zohren, and S. Roberts, Deep re-
+inforcement learning for trading, The Journal of
+Financial Data Science 2, 25 (2020).
+[26] Y. Deng, F. Bao, Y. Kong, Z. Ren, and Q. Dai,
+Deep direct reinforcement learning for nancial
+signal representation and trading, IEEE transac-
+tions on neural networks and learning systems 28,
+653 (2016).
+[27] Z. Wang, T. Schaul, M. Hessel, H. Hasselt,
+M. Lanctot, and N. Freitas, in International con-
+ference on machine learning (PMLR, 2016), 1995{
+2003.
+[28] X. Wu, H. Chen, J. Wang, L. Troiano, V. Loia,and H. Fujita, Adaptive stock trading strategies
+with deep reinforcement learning methods, Infor-
+mation Sciences 538, 142 (2020).
+[29] D. Vezeris, I. Karkanis, and T. Kyrgos, Adtur-
+tle: An advanced turtle trading system, Journal
+of Risk and Financial Management 12, 96 (2019).
+[30] Z. Liang, H. Chen, J. Zhu, K. Jiang, and Y. Li,
+Adversarial deep reinforcement learning in portfo-
+lio management, arXiv preprint arXiv:1808.09940
+(2018).
+[31] Z. Jiang, D. Xu, and J. Liang, A deep rein-
+forcement learning framework for the nancial
+portfolio management problem, arXiv preprint
+arXiv:1706.10059 (2017).
+[32] P. C. Pendharkar and P. Cusatis, Trading nancial
+indices with reinforcement learning agents, Expert
+Systems with Applications 103, 1 (2018).
+[33] M. Schnaubelt, Deep reinforcement learning for
+the optimal placement of cryptocurrency limit or-
+ders, European Journal of Operational Research
+296, 993 (2022).
+[34] F. Bertoluzzo and M. Corazza, Testing dierent
+reinforcement learning congurations for nancial
+trading: Introduction and applications, Procedia
+Economics and Finance 3, 68 (2012).
+[35] M. Taghian, A. Asadi, and R. Safabakhsh, Learn-
+ing nancial asset-specic trading rules via deep
+reinforcement learning, Expert Systems with Ap-
+plications 195, 116523 (2022).
+[36] M. G. Bellemare, W. Dabney, and R. Munos,
+Samahang Pisika ng Pilipinas 15Submitted to Pisika Boyi Jin
+inInternational Conference on Machine Learning
+(PMLR, 2017), 449{458.
+[37] T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess,
+T. Erez, Y. Tassa, D. Silver, and D. Wierstra,
+Continuous control with deep reinforcement learn-
+ing, arXiv preprint arXiv:1509.02971 (2015).
+[38] S. Fujimoto, H. Hoof, and D. Meger, in Inter-
+national conference on machine learning (PMLR,
+2018), 1587{1596.
+[39] S. Carta, A. Corriga, A. Ferreira, A. S. Podda, and
+D. R. Recupero, A multi-layer and multi-ensemble
+stock trader using deep learning and deep rein-
+forcement learning, Applied Intelligence 51, 889
+(2021).
+[40] S. Barra, S. M. Carta, A. Corriga, A. S. Podda,
+and D. R. Recupero, Deep learning and time
+series-to-image encoding for nancial forecasting,
+IEEE/CAA Journal of Automatica Sinica 7, 683
+(2020).
+[41] T. Th eate and D. Ernst, An application of deep
+reinforcement learning to algorithmic trading,
+Expert Systems with Applications 173, 114632
+(2021).
+[42] R. T. Rockafellar, S. Uryasev, et al., Optimization
+of conditional value-at-risk, Journal of risk 2, 21
+(2000).
+Samahang Pisika ng Pilipinas 16

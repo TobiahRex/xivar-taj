@@ -1,0 +1,393 @@
+EXPLORATION OF ALGORITHMIC TRADING STRATEGIES FOR
+THE BITCOIN MARKET
+A P REPRINT
+Nathan Crone
+School of Computing
+Dublin City University
+Dublin, Ireland
+nathan.crone2@mail.dcu.ieEoin Brophy
+School of Computing and INFANT Research Centre
+Dublin City University
+Dublin, Ireland
+eoin.brophy7@mail.dcu.ie
+Tomás Ward
+Insight SFI Centre for Data Analytics
+Dublin City University
+Dublin, Ireland
+tomas.ward@dcu.ie
+September, 2021
+ABSTRACT
+Bitcoin is ﬁrmly becoming a mainstream asset in our global society. Its highly volatile nature has
+traders and speculators ﬂooding into the market to take advantage of its signiﬁcant price swings
+in the hope of making money. This work brings an algorithmic trading approach to the Bitcoin
+market to exploit the variability in its price on a day-to-day basis through the classiﬁcation of its
+direction. Building on previous work, in this paper, we utilise both features internal to the Bitcoin
+network and external features to inform the prediction of various machine learning models. As an
+empirical test of our models, we evaluate them using a real-world trading strategy on completely
+unseen data collected throughout the ﬁrst quarter of 2021. Using only a binary predictor, at the
+end of our three-month trading period, our models showed an average proﬁt of 86%, matching the
+results of the more traditional buy-and-hold strategy. However, after incorporating a risk tolerance
+score into our trading strategy by utilising the model’s prediction conﬁdence scores, our models were
+12.5% more proﬁtable than the simple buy-and-hold strategy. These results indicate the credible
+potential that machine learning models have in extracting proﬁt from the Bitcoin market and act as a
+front-runner for further research into real-world Bitcoin trading.
+Keywords Time Series Classiﬁcation Machine Learning Bitcoin Algorithmic Trading Blockchain
+1 Introduction
+Cryptocurrencies have been one of the most popular assets to trade among retail investors over the last few years. This
+appeal has stemmed from their highly volatile nature, which has offered massive opportunities to make money. While
+human day traders have proved unsuccessful in predicting market ﬂuctuations [Chague et al., 2020], algorithmic trading
+presents enormous potential in the space due to their high bandwidth and speed capabilities. Of all the cryptocurrencies
+which are hosted on exchanges, Bitcoin [Nakamoto, 2008] is by far the most valuable and most renowned, making up
+about 43% of the entire cryptocurrency market. While an asset’s value in and of itself does not directly translate into
+trading opportunity, Bitcoins market liquidity poses the perfect opportunity for algorithmic trading with 7% of its total
+value changing hands daily [CoinMarketCap, 2021].
+Trading algorithms work similarly to human traders wherein they draw upon their knowledge of the market’s dynamics
+in combination with their perception of the current market state to make a judgement call on how to forecast thearXiv Template A P REPRINT
+underlying asset’s price. This research will focus on next-day Bitcoin price movement direction classiﬁcation using
+machine learning algorithms. This one-day prediction period yielded favourable prediction results in previous studies
+[Mudassir et al., 2020, Sebastião and Godinho, 2021], and is also a strong choice in terms of the availability of data
+measured on a daily timeframe. This is important as the features we give our algorithms dictate their ability to classify
+the daily price ﬂuctuations.
+Following on from the work of Mudassir et al. [2020], we will use features describing the Bitcoin network alongside
+various technical indicator features based on these features. While features describing the internals of the Bitcoin
+network have shown to be successful [Balcilar et al., 2017, Ji et al., 2019, Huang et al., 2019], it is important to note
+that they lack other such market characteristics that some investors and speculators may consider to be useful. Some
+of these include stock market data, commodity data, currency exchange data, economic data, and social media data.
+Several studies have attempted to address this research gap on a small scale [Mai et al., 2018, Lyócsa et al., 2020, Chen
+et al., 2020, Mallqui and Fernandes, 2019, Jaquart et al., 2021]; however, this study addresses feature expansion more
+comprehensively.
+The key contributions of this paper can be summarised as follows:
+•We attempt to verify the performance of models reported in previous studies and demonstrate issues with
+respect to overﬁtting, something which is very common in published data science research.
+•To the best of our knowledge, we establish a plausible new benchmark for machine learning in this space by
+representing the most rigorous and credible scientiﬁcally published Bitcoin trading algorithm to date.
+•We develop an algorithmic Bitcoin trading method using a broad range of features which, when taken together,
+have been underexploited in previous studies. The use of these features in their raw form does not prove to
+have a signiﬁcant effect on the model performance.
+•We demonstrate the real-world trading performance of our developed model through an empirical test on
+completely unseen data collected during the year 2021. This provides a reliable metric for evaluating model
+performance over and above conventional metrics.
+•We utilise the probabilistic outputs of the classiﬁers to naturally parameterise trading risk and allowing traders
+to ﬂexibly specify their risk appetite. This shows traders with higher risk tolerances to be the most proﬁtable.
+We organise the rest of this paper as follows: Section 2 investigates the reproducibility of a prominent paper in the
+area, Section 3 describes the approach we took to this forecasting problem, in Section 4 we present the results of our
+machine-learning classiﬁcation models hosting intermediate discussion between results, and Section 5 concludes our
+research.
+2 Reproducibility Challenges
+Our paper uses Mudassir et al. [2020] as a benchmark and attempts to reproduce its results. Mudassir et al. presented
+classiﬁcation and regression machine learning approaches for predicting Bitcoin price movements. Their work uses
+internal Bitcoin features and technical indicators coupled with either Principal Component Analysis (PCA) or a novel
+feature selection technique to create a dataset for the modelling task. Their research proposes to build on previous
+works in the area, and as such, the paper uses models trained over three different time intervals to accurately compare
+the results with previous works. Due to the changing nature of the Bitcoin market, in this study, we will only consider
+the papers most recent interval, which runs from April 2013 to December 2019. The models presented in this study
+are an Artiﬁcial Neural Network (ANN), a Long-Short Term Memory Network (LSTM), a Stacked Artiﬁcial Neural
+Network (SANN), and a Support Vector Machine (SVM).
+Using a single 80-20 train-test split, the paper reports results for both a next day price classiﬁcation task, as shown in
+Table 1, and a next day exact price regression task. The results of the classiﬁcation task show the SANN to achieve the
+highest accuracy and AUC score, achieving 60% for both metrics.
+However, after implementing the methodology described in this work using the code on GitHub, we observed some
+discrepancies in the reported results. During this process, it became apparent that the SANN in both the classiﬁcation
+task and regression task and the LSTM in the regression task had been trained on the test data. This oversight resulted in
+overﬁtting, thus the evaluation results derived for these models are excessively optimistic in terms of their predictional
+performance on future data. Table 2 highlights the signiﬁcant impact of this overﬁtting on the classiﬁcation task.
+It also appears that another error occurs in the PCA step where the PCA components were not applied correctly.
+The models in this paper are trained using the principal components themselves as features instead of using these
+2arXiv Template A P REPRINT
+Table 1: The accuracy, f1-score, and AUC score re-
+ported in Mudassir et al. [2020] for their classiﬁcation
+models.
+Metrics ANN SVM SANN LSTM
+Acc. (%) 53 56 60 54
+F1-Score 0.61 0.53 0.60 0.66
+AUC 0.53 0.56 0.60 0.54Table 2: A comparison of the SANN evaluation met-
+rics reported in Mudassir et al. [2020] alongside met-
+rics we derived after removing the model overﬁtting.
+Metrics SANN (org) SANN (ﬁx)
+Acc. (%) 60 54
+F1-score 0.60 0.51
+AUC 0.60 0.54
+components to transform their data to then be used for model training. This produces erroneous features, completely
+distorting the data used in the PCA derived results.
+Moreover, in the paper in question, hyperparameter tuning and experimentation with model architecture are not
+developed in good detail and there is no evidence to suggest that hyperparameter optimisation took place to the level of
+rigour required. Furthermore, some of the derived hyperparameter values are not well supported in the paper in terms of
+them being derived in a process-driven way. To improve the rigour of the approach described in the paper, it would
+have been better if hyperparameter optimisation for parameter selection was utilised and if the single 80-20 train-test
+split was replaced with cross-validation.
+Our investigation of this study and examination of its work has highlighted the challenges facing data scientists in
+rigorous and robust model development. As the data science industry evolves, better approaches to evaluation are
+constantly being developed and in this example, we hope to progress this development by pointing out some common
+issues and how to remedy them. Despite these issues, we believe the authors of this paper are doing a great service by
+making their data and models freely and publicly available and it is thanks to the approach of these authors that we were
+able to highlight any issues with their process. While in the future others may ﬁnd shortcomings with our approach,
+we hope that this ethos of openness and transparency of data science in the FinTech space will help to improve the
+robustness, trust, and utility of the underlying models and derived results.
+3 Methodologies
+Figure 1 shows the methodology proposed in this paper. The presented approach starts with the construction of a dataset
+using the features explained in Section 3.1. We then use data pre-processing to gather the data, clean it, and create new
+aggregate features. In the feature selection step, we extract the relevant features from the data to use for model training.
+In training, we scale the data, deﬁne our parameters using hyperparameter optimisation alongside cross-validation, and
+train our models. The last step of our process involved employing our trained models in trading on real-world data as an
+intuitive form of evaluation.
+3.1 Data Collection
+To build on previous research, we wanted to incorporate more features into the data than had been done in previous
+studies. These features break down into two distinct types: features internal to the Bitcoin Blockchain network and
+external factors that may affect the Bitcoin price.
+Internal features have heavily informed research in this area due to their proven predictive power concerning the Bitcoin
+price. These features describe information related to the Bitcoin asset itself and the interactions on its Blockchain
+network. While many online sources contain this data, we decided to follow Mudassir et al. [2020] in scraping
+internal Bitcoin features from https://bitinfocharts.com. As explained in their paper, this website offers the ability to
+scrape nine different technical indicators over ﬁve different periods for each feature, alongside the raw feature values.
+These technical indicators allow us to capture underlying interdependencies and statistical factors in the data that
+may otherwise have gone unnoticed. Additionally, we combine this data with other internal features scraped from
+https://data.Bitcoinity.org. This data source includes data from various Bitcoin exchanges throughout the world and
+adds several extra features to our feature set. Having data from multiple exchanges allows us to capture previously
+unknown variances in the data shown to Bitcoin traders on these platforms.
+While previous studies have incorporated external features, such as a small set of stock or commodity indices [Mallqui
+and Fernandes, 2019, Chen et al., 2020] or macroeconomic and sentiment-based features [Mai et al., 2018, Lyócsa
+et al., 2020, Raju and Tarif, 2020], these studies have not used these features simultaneously or on the scale proposed
+in this research. Alongside this, to the best of our knowledge, currency exchange data has never been explored as a
+3arXiv Template A P REPRINT
+Figure 1: The proposed methodology for this study.
+potential predictive factor. As a novel contribution to our paper, we signiﬁcantly expand the standard feature set used in
+this modelling task to explore untapped feature areas to increase our prediction power.
+We scraped commodities, stocks, and currency exchange data from https://ﬁnance.yahoo.com using the Yahoo Finance
+API. This API provided us with a one-stop shop to scrape all the external features that we needed from these categories.
+Table 3 shows a list of the diverse set of commodity futures, stock exchange indices, and currency exchange rates
+that we incorporate into our model. Instead of focusing solely on monetary commodities like gold, as was done in
+earlier studies, we included a vast range of monetary, industrial, and food commodities in this study. This helps us to
+characterise market inﬂuencers like inﬂation which are sometimes misreported in economic indicators. Furthermore,
+while previously cited studies only considered the leading American stock exchange indexes in their data, we take a
+more worldwide approach to features in this study. Bitcoin is an asset used and traded worldwide by people with vastly
+different market perceptions and using many different currencies. This must be factored into our data to allow our
+model to gain the best possible perception of the market that we can give it.
+Table 3: The commodity futures, stock indices, and currency exchange rates scraped from Yahoo Finance.
+Commodity Futures Stock Indices Currency Exchange Rates
+Crude Oil Soybean Oil S&P 500 Index Turkey’s BIST 100 index Euro - GBP
+Natural Gas Corn Dow Jones Industrial Average Taiwan exchange index Euro - Swiss Franc
+Gold Wheat Nasdaq index Hong Kong’s Hang Seng index Euro - Japanese Yen
+Silver Oat NYSE composite index Singapore FTSE straits index GBP - Japanese Yen
+Platinum Rough Rice AMEX composite index Japanese Nikkei 225 index USD - Japenese Yen
+Palladium Sugar Russell 2000 index Korean Kospi index USD - Euro
+Copper Cocoa Euro STOXX 50 index Indonesian IDX composite index USD - Canadian Dollar
+Aluminium Coffee Euronext 100 index Australian ASX 200 index USD - Australian Dollar
+Lumber Live Cattle UK FTSE 100 index Australian ordinaries index USD - Mexican Peso
+Cotton Lean Hogs Irish ISEQ index Johannesburg top 40 index USD - Hong Kong Dollar
+Soybean Meal German DAX index Buenos Aires S&P MERV AL index
+Belgium 20 index Santiage IPSA index
+French CAC index Mexican MXX index
+Spanish IBEX index Toronto’s S&P/TSX index
+Globally diverse economic data was another crucial factor of our novel feature set. Economic inﬂuences have
+become particularly important over the last few years and months, where we have seen massive monetary expenditure
+and changes in ﬁscal policy. We scraped the most critical US Federal Reserve Bank (FED) economic indicators
+4arXiv Template A P REPRINT
+from http://quandl.com using their API, and we got access to vital data on other EU and non-EU countries using
+https://db.nomics.world/Eurostat.
+The ﬁnal set of features built into our dataset relate to social media sentiment. Over the last number of months, social
+media has had a powerful inﬂuence on the trading landscape of speciﬁc assets [Štefan Lyócsa et al., 2021]. Our study
+attempts to capture some of these social media inﬂuences by paying particular attention to the Bitcoin-related Twitter
+activity. Through https://bitinfocharts.com, we were able to scrape a counter of the Bitcoin-related tweets for each
+day, alongside several technical indicator features based on this. We could then add to this by using the Twitter API
+to scrape tweets related to speciﬁc Bitcoin inﬂuencers. Our logic for this was inﬂuenced by Mai et al. [2018] as they
+report the majority of Bitcoin-related tweets to be noise and that some minority of users and tweets have a signiﬁcant
+impact on the price. Due to the restrictions of the Twitter API limit, we could only get access to the tweets of Elon
+Musk. Musk’s tweets have had a noticeable impact on the Bitcoin price in recent months, and by transforming his
+tweets into sentiment-based numeric features, we hope to represent this inﬂuence in our dataset.
+3.2 Data Pre-Processing
+In data pre-processing, we ﬁll in the missing values from the collected data. Where possible, we imputed missing
+values in the internal Bitcoin data using linear interpolation. Missing values that cannot be imputed are ﬁltered out
+later through the date range selected for the training interval. In Mudassir et al. [2020], they ﬁll these uninterpolatable
+missing values with the most common value for that column; however, we did not feel that this approach is appropriate
+given the data’s sequential nature and Bitcoin’s growth over the past decade. The commodity, stock, and currency
+exchange data had missing values that needed to be ﬁlled from when their respective exchanges were closed. We use
+forward ﬁlling for the price features and handle the volume feature by ﬁlling them with ‘0’. This means that the price
+value from the previous trading day is carried forward and used as the current day’s value. We also used this technique
+to populate readings in the economic indicator data. Interpolation was not an option in this case as, in the real world, we
+do not know what the next value will be, so we can only base our market perceptions on the previous value. To help
+account for this by giving our algorithm a better sense of time, we included two cyclical time features to represent the
+day of the week and the day of the month.
+In addition to this, we created a period lag feature as in Laboissiere et al. [2015] to represent our classiﬁcation target.
+For the lag period of one day used in this study, this created a feature that would be assigned a ’1’ or a ’0’ based on
+whether the current price had increased or decreased relative to the previous day’s price.
+3.3 Feature Selection
+Given that our feature expansion left us with over 1,450 features, feature selection was vital in the modelling process.
+The approach we took for this was dimensionality reduction through Principal Component Analysis (PCA). This data
+projection technique uses matrix manipulations to deﬁne a set of components that can transform our features into a
+new set of linearly independent features. Using this feature selection method, we could capture different amounts of
+variance in our data through a much smaller feature set than our original dataset.
+In this step, we also select the date range for our training data. We employ a data-driven approach when making this
+selection by attempting to maximise the interval size while ensuring not to bring missing values into the data. The
+resulting range for our training data was from August 2015 to December 2020, leaving us a quarter from January 2021
+to April 2021 to trade with our models on unseen real-world data.
+3.4 Prediction Models
+Our training data consists of only 4500 data points, one entry for each day; hence, we felt that it was not sufﬁciently
+large enough to train a neural-based model. Instead, in this paper, we explore simpler models such as Support Vector
+Machine (SVM), XGBoost (XGB), Random Forest Classiﬁer (RFC), and Bernoulli Naive Bayes (BNB). To ensure we
+were not overﬁtting, we rigorously use nested time-series cross-validation during our hyperparameter optimisation step,
+making use of the sequential nature of the time-series throughout its folds. This process also provides us with a realistic
+evaluation metric for our model. Figure 2 shows the incorporation of this cross-validation into the hyperparameter
+optimisation process. Due to computational limitations, we split the hyperparameter optimisation into two steps,
+dealing with the numeric values through Bayesian Optimisation and utilising grid search cross-validation to select the
+categorical values. Once we select the optimal hyperparameters and calculate the cross-validation evaluation metrics,
+we use the chosen hyperparameters to train our ﬁnal prediction models on the full dataset. This ﬁnal model yields the
+data’s absolute predictive power, which sets up nicely for our evaluation through real-world trading.
+5arXiv Template A P REPRINT
+Figure 2: The hyperparameter optimisation process proposed in this study.
+3.5 Trading
+We trade with these algorithms over completely unseen data collected throughout 2021 by using each model to make a
+following day price direction classiﬁcation. Regardless of the asset price on any day, under our trading strategy, if the
+model predicts a price increase, we buy one Bitcoin, and if the model predicts a price decrease, we sell one Bitcoin. The
+following day, we then neutralise our position by either selling any Bitcoin we purchased or buying back any Bitcoins
+we sold. This daily refresh allows us to continually update a total proﬁt & loss tracker for our models, giving us a
+straightforward way to measure the real-world predictive power of our models. We deﬁne this metric as the difference
+between our buy price and our sell price, regardless of the order they occur. We can also take our trading strategy
+further by incorporating a risk tolerance score that employs the model’s conﬁdence scores in the underlying predictions.
+Through normalisation, we parameterise the ﬂuctuations in model conﬁdence through a customisable risk tolerance
+parameter, introducing the ability for a trader to sit out of the market during periods of model uncertainty.
+4 Results & Discussion
+4.1 Price Direction Forecast Accuracy
+We initially evaluated the performance of our classiﬁcation models through nested cross-validation by recording
+the cross-validation accuracy, precision, recall, and F1 of the best model conﬁgurations. The most desirable model
+maximises all of these metrics; however, accuracy is the most commonly used, and hence we use it to optimise our
+hyperparameters. Table 4 puts forward our realistic and thoroughly validated results for the predictability of Bitcoin’s
+price movements over our model training period. We derive these results from three datasets, each obtained using a
+speciﬁc number of PCA components, to explain various levels of variance of the original data. The evaluation of these
+models across these datasets showed the SVM to perform the best, achieving an accuracy score of 56% and an F1 score
+of 0.716 when trained on the dataset explaining 95% of the original data’s variance. These results were closely followed
+by that of the RFC, which achieved an average cross-validation accuracy score of 55.7% on this same dataset.
+To further ensure the rigour of our process, we ran AutoML on our data as a sanity check of our derived results. Under
+the AutoML process, our data is loaded in, scaled, the key features are selected, and then the models in the AutoML
+pipeline are iteratively evaluated to see which one scores the best. The process stops once it ﬁnds the optimal model,
+and then it returns the necessary code to create this model and its associated cross-validation accuracy score. The model
+selected through our run was the Bernoulli Naive Bayes (BNB) model, which achieved an average cross-validation
+accuracy score of 57%. This accuracy score was remarkably similar to the scores we got through our hyperparameter
+optimisation and cross-validation process and hence backed up the validity of our results.
+4.2 Feature Signiﬁcance
+After deﬁning our methodology and obtaining our evaluation scores, we then set out to measure the difference in
+performance between our features and the features set out in Mudassir et al. [2020]. We saw no signiﬁcant difference in
+the reported evaluation metrics upon replacing our features with the features used in this study. This was surprising
+given that we had almost doubled the feature set size; however, when we investigated the feature importance in more
+detail, the signiﬁcance of the technical indicators used in conjunction with the features in the previous study became
+more apparent. Using a random forest classiﬁer, we calculated an importance score for each feature in our dataset and
+discovered that of the top 200 most important features, only 20% were added to the feature set in this study, of which
+6arXiv Template A P REPRINT
+Table 4: The cross-validation evaluation metrics for each model after being trained on datasets maintaining different
+levels of explained variance from the original data.
+Metrics Expl var (%) SVM XGB RFC
+80 55.9 54.7 54
+Acc. (%) 90 54.9 55 55.7
+95 56 53.9 55.7
+80 0.716 0.654 0.687
+F1-Score 90 0.69 0.688 0.707
+95 0.716 0.441 0.704
+80 0.56 0.56 0.556
+Precision 90 0.552 0.56 0.56
+95 0.56 0.349 0.562
+80 1 0.833 0.911
+Recall 90 0.938 0.907 0.964
+95 1 0.6 0.947
+78% were technical indicators. This analysis emphasises the predictive power of technical indicators and sets the stage
+for future research pairing similar features with relevant technical indicators.
+4.3 Trading Performance
+After evaluating our models using our deﬁned trading strategy over the three-month real-world test period, our models
+made an average of $24,000. While we expected our models to actively trade the market using market ﬂuctuations,
+from analysis of the prediction scores made by these models, they seem to opt for more of a buy-and-hold strategy to
+trading the Bitcoin market. This strategy proved massively successful over the given period, with the Bitcoin price
+starting at over $28,000 and rising above $52,000 by the end, constituting an 86% increase in price.
+Despite the overwhelming majority of the models predicting the naive class each time, as we varied our risk tolerance
+parameter, we saw more dissimilarities between the models trading proﬁt & loss values. While in a real-world situation,
+this parameter would be set based on the traders personal trading goals, for this study, we wanted to investigate what
+risk tolerance might yield the most proﬁt. This investigations stems from the fact that the lower a traders risk tolerance
+is, the more hesitant they will be to either buy or sell at any given time. Wielding the probabilistic prediction outputs of
+our models, we created a ROC curve and used its geometric mean scores to obtain the optimal classiﬁcation threshold
+for each model. We could then translate these thresholds into a risk tolerance parameter through normalisation. Figure
+3 shows the proﬁt & loss values for a few of our models over the given period when we speciﬁed a 30% risk tolerance.
+This ﬁgure illustrates that both the Bernoulli Naive Bayes (BNB) model and the Random Forest Classiﬁer outperform a
+buy-and-hold trading strategy, with the BNB model achieving a proﬁt of over $27,000 while the buy-and-hold strategy
+only saw a proﬁt of $24,000. This difference represents a relative proﬁt of 12.5% over the quarter for the BNB model.
+While this optimised risk parameter yielded desirable results, most risk tolerance values could not outperform this
+simple buy-and-hold strategy.
+Figure 3: The models calculated proﬁt and loss over time relative to the Bitcoin price as we trade with a 30% risk
+tolerance using its predictions.
+7arXiv Template A P REPRINT
+4.4 Limitations
+Results different to those presented in this paper may be obtained when the models are run using our code from GitHub.
+This stems from the fact that the derived results presented here were obtained during the period of 23rd March to 2nd
+April, after which some changes were made concerning the data used to train the model among other minor procedural
+changes. As such, the results generated in this paper are based on a subset of the data collected through our scraping
+process and using a very similar process to that of our current Jupyter notebooks.
+5 Conclusion & Future Work
+This paper sets out to clear up much of the existing literature by proposing a new benchmark bitcoin price forecasting
+process that future studies can build on. We explore the reproducibility challenges currently facing the data science
+industry and demonstrate the need for a rigorous machine learning pipeline to ensure the accurate reporting of model
+results. Alongside this, we propose a new, more realistic form of evaluation through the use of real-world trading, and
+we investigate the effect a trader’s risk tolerance has on their proﬁtability. This showed our models to trade more similar
+to a buy-and-hold strategy than what would be expected of an algorithmic trading algorithm. Nevertheless, this proved
+hugely successful over our evaluation period. We were also able to exhibit the capabilities of building a modiﬁable
+risk tolerance parameter into future trading algorithms through our Bernoulli Naive Bayes model, which, relative to a
+buy-and-hold strategy, achieved a 12.5% better quarterly return.
+While our vast expansion of previously deﬁned feature sets did not signiﬁcantly impact our models forecasting ability,
+future inquiry should attempt to build on this by further exploring the use of technical indicators on these. Moreover, we
+feel further exploration into social media such as Reddit, Facebook, 4chan, and Twitter would boost model forecasting
+ability. In addition, online learning could be applied to the trading evaluation to increase its validity as a metric that can
+quantify a models proﬁtability in the real-world bitcoin market.
+We appreciate that the approach we present in this paper is unlikely to be without error and in the spirit of openness and
+transparency, we make our code and data available through our GitHub repository (https://github.com/Crone1/Bitcoin-
+Algorithmic-Trading-Paper) to allow full replication by others. We welcome any extensions, corrections, and improve-
+ments to the models we present.
+References
+Fernando Chague, Rodrigo De-Losso, and Bruno Giovannetti. Day Trading for a Living? SSRN Scholarly Paper
+ID 3423101, Social Science Research Network, Rochester, NY , June 2020. URL https://papers.ssrn.com/
+abstract=3423101 .
+Satoshi Nakamoto. Bitcoin: A Peer-to-Peer Electronic Cash System. Cryptography Mailing list at https://metzdowd.com ,
+page 9, October 2008.
+CoinMarketCap. Market capitalization and trading volume of bitcoin from march 2013 to may 2021, 2021. URL
+https://coinmarketcap.com/currencies/bitcoin/ .
+Mohammed Mudassir, Shada Bennbaia, Devrim Unal, and Mohammad Hammoudeh. Time-series forecasting of Bitcoin
+prices using high-dimensional features: a machine learning approach. Neural Computing and Applications , July 2020.
+ISSN 1433-3058. doi:10.1007/s00521-020-05129-6. URL https://doi.org/10.1007/s00521-020-05129-6 .
+Helder Sebastião and Pedro Godinho. Forecasting and trading cryptocurrencies with machine learning under changing
+market conditions. Financial Innovation , 7(1):3, January 2021. ISSN 2199-4730. doi:10.1186/s40854-020-00217-x.
+URL https://doi.org/10.1186/s40854-020-00217-x .
+Mehmet Balcilar, Elie Bouri, Rangan Gupta, and David Roubaud. Can volume predict Bitcoin returns and
+volatility? A quantiles-based approach. Economic Modelling , 64:74–81, August 2017. ISSN 0264-
+9993. doi:10.1016/j.econmod.2017.03.019. URL http://www.sciencedirect.com/science/article/pii/
+S0264999317304558 .
+Suhwan Ji, Jongmin Kim, and Hyeonseung Im. A Comparative Study of Bitcoin Price Prediction Using Deep Learning.
+Mathematics , 7(10):898, October 2019. doi:10.3390/math7100898. URL https://www.mdpi.com/2227-7390/
+7/10/898 . Number: 10 Publisher: Multidisciplinary Digital Publishing Institute.
+Jing-Zhi Huang, William Huang, and Jun Ni. Predicting bitcoin returns using high-dimensional techni-
+cal indicators. The Journal of Finance and Data Science , 5(3):140–155, September 2019. ISSN 2405-
+9188. doi:10.1016/j.jfds.2018.10.001. URL http://www.sciencedirect.com/science/article/pii/
+S2405918818300928 .
+8arXiv Template A P REPRINT
+Feng Mai, Zhe Shan, Qing Bai, Xin (Shane) Wang, and Roger H. L. Chiang. How Does Social Media Impact Bitcoin
+Value? A Test of the Silent Majority Hypothesis. Journal of Management Information Systems , 35(1):19–52, January
+2018. ISSN 0742-1222. doi:10.1080/07421222.2018.1440774. URL https://doi.org/10.1080/07421222.
+2018.1440774 . Publisher: Routledge _eprint: https://doi.org/10.1080/07421222.2018.1440774.
+Štefan Lyócsa, Peter Molnár, Tomáš Plíhal, and Mária Šira ˇnová. Impact of macroeconomic news, regulation and hacking
+exchange markets on the volatility of bitcoin. Journal of Economic Dynamics and Control , 119:103980, October
+2020. ISSN 0165-1889. doi:10.1016/j.jedc.2020.103980. URL http://www.sciencedirect.com/science/
+article/pii/S0165188920301482 .
+Zheshi Chen, Chunhong Li, and Wenjun Sun. Bitcoin price prediction using machine learning: An approach to sample
+dimension engineering. Journal of Computational and Applied Mathematics , 365:112395, February 2020. ISSN
+0377-0427. doi:10.1016/j.cam.2019.112395. URL http://www.sciencedirect.com/science/article/pii/
+S037704271930398X .
+Dennys C. A. Mallqui and Ricardo A. S. Fernandes. Predicting the direction, maximum, minimum and closing prices of
+daily Bitcoin exchange rate using machine learning techniques. Applied Soft Computing , 75:596–606, February 2019.
+ISSN 1568-4946. doi:10.1016/j.asoc.2018.11.038. URL http://www.sciencedirect.com/science/article/
+pii/S1568494618306707 .
+Patrick Jaquart, David Dann, and Christof Weinhardt. Short-term bitcoin market prediction via machine learning. The
+Journal of Finance and Data Science , 7:45–66, November 2021. ISSN 2405-9188. doi:10.1016/j.jfds.2021.03.001.
+URL https://www.sciencedirect.com/science/article/pii/S2405918821000027 .
+S M Raju and Ali Mohammad Tarif. Real-time prediction of bitcoin price using machine learning techniques and public
+sentiment analysis, 2020.
+Štefan Lyócsa, Eduard Baumöhl, and Tomáš V ˆyrost. Yolo trading: Riding with the herd during the gamestop
+episode. Technical report, Leibniz Information Centre for Economics, Kiel, Hamburg, Kiel, Hamburg, 2021. URL
+http://hdl.handle.net/10419/230679 .
+Leonel A. Laboissiere, Ricardo A. S. Fernandes, and Guilherme G. Lage. Maximum and minimum stock price
+forecasting of Brazilian power distribution companies based on artiﬁcial neural networks. Applied Soft Computing ,
+35:66–74, October 2015. ISSN 1568-4946. doi:10.1016/j.asoc.2015.06.005. URL https://www.sciencedirect.
+com/science/article/pii/S156849461500352X .
+9

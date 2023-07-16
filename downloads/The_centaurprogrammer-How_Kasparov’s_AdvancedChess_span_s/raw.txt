@@ -1,0 +1,144 @@
+The centaurprogrammer-How Kasparov’s AdvancedChess span s
+overto the so/f_tware developmentofthe future
+PEDROALVES, LusófonaUniversity, Portugal
+BRUNO PEREIRACIPRIANO, Lusófona University, Portugal
+We introducetheidea ofCentaur Programmer,based onthepre misethat acollaborativeapproachbetweenhumans and AI
+will be more eﬀective than AI alone, as demonstrated in centa ur chess tournaments where mixed teams of humans and AI
+beat solecomputers.
+The paper introduces several collaborationmodels for prog ramming alongside an AI, including the guidance model,the
+sketch model,andtheinverted controlmodel,andsuggests t hatuniversities shouldpreparefutureprogrammers foramo re
+eﬃcient and productiveprogramming environment augmented with AI.
+We hope to contribute to the important discussion about the d iverse ways whereby humans and AI can work together
+inprogramminginthenextdecade,howuniversities shouldh andlethesechanges andsomelegal implicationssurroundin g
+this topic.
+Additional KeyWords and Phrases: PositionPaper,Artiﬁcia lIntelligence, Programming
+1 INTRODUCTION
+Thevictoryofacomputer(DeepBlue)againstGaryKasparov,t heworldchesschampion,in1997wasamilestone
+in AI history and led many to predict the substitution of humans b y machines in a wide range of activities [3].
+The digital revolution had been dismissing repetitive, high lystandardized tasks with little need for intellectual
+skills, butnow it seemedthat even highlycomplextaskscould beperformedbymachines,at lowcost andhigh
+eﬃciency.
+One such task is programming itself. While many workers were alr eady concerned about maintaining their
+jobs,thiswasnotonthemindsofthemillionsofprogrammersfue lingthedigitalrevolution.Afterall,someone
+hastocreatethesystemsthatsupportthisrevolution.Recent ly,LLM-basedtools(e.g.,GPT-3)haveshowngreat
+eﬀectivenessinprogrammingtasks,beingabletosolveexercis esatthelevelofanaveragestudentinaComputer
+Engineering course [2]. New versions promise to improve this per formance [6]. Is this the Deep Blue vs. Gary
+Kasparov momentofprogramming?Will even programmersthemse lves bereplaced byAI?
+Wecannotpredictthefuture,butwecanlearnfromthepast.Ret urningtotheworldofchess,afterKasparov’s
+defeat,therewereseveralexperimentswithcompetitionsinvo lvinghumansandAI,whichwerecalled"Centaur
+Chess"1inanalogytothemythologicalﬁgureoftheCentaurthatwashal fhuman,halfhorse.Fromtheseexper-
+iments,one,inparticular,broughtinteresting ﬁndings.In2005, therewasachesstournamentinwhichallkinds
+of entities could compete:computers, chess champions,and mix ed teams composed of humans and computers.
+Itwasalreadyexpectedthatcomputerswouldbeatchesscham pions,butwhatwasnotexpectedwasthatmixed
+teamswould beat computers.In otherwords, thecombination o fhuman+AIseemedto be moreeﬀective than
+AI alone.Theidea ofthe Centaur asa modelfor future workwasst arting to takeshape [1].
+Inthispaper,wearguethatsomethingsimilarwillhappeninp rogramming.Ateamformedbyprogrammers
+(humans)and AIwill bemore eﬀective thanAI alone,hencetheterm Centaur Programmer.
+1Alsoknownas "Advanced Chess"
+Authors’ addresses: Pedro Alves, Lusófona University, Campo Gr ande, 376, Lisbon, Portugal, 1700-097, pedro.alves@ulusofona .pt; Bruno
+Pereira Cipriano, Lusófona University, Campo Grande, 376,Lisbon,Port ugal,1700-097,bcipriano@ulusofona.pt.2 • Pedro Alves andBrunoPereira Cipriano
+We propose several models under which this collaboration may occur, show how universities may adapt to
+this new reality, draw attention to legal and ethical implicati ons and ﬁnish with some conclusions about what
+the future may holdforthistopic.
+2 COLLABORATIONMODELS
+The collaboration between human and AI has already been succe ssfully proven in other areas. Maurice Conti
+demonstrated that, with the help of AI, he was able to design ve ry eﬃcient equipment that would never have
+seen the light of day if the teams were purely made up of humans o r AI [4]. The process was simple: humans
+deﬁned objectivesandconstraintsrelatedtoacertainproblem, andAIevolved possible solutionswithconstant
+validation fromhumans.
+Thiscollaborationmodel,whichwe cancallthe "guidance mod el,"isone ofthe most interesting possibilities
+alsofortheprogrammingarea.Theprogrammerstartstheproc ess,indicatingtotheAIwhattheobjectivesand
+assumptions are, and the AI responds with solutions. With the hel p of the programmer, these solutions evolve
+until theyreachthedesired result.Theﬁnalsolution mayorma ynot bebetter thanasolution purelyimagined
+by the programmer,but it will probably be achieved muchmore quickly. For now, we are mainly talking about
+eﬃciencygainsratherthannew solutions. ButAItechnologiesare evolving rapidly,and,in thenear future,we
+may actually have better-designed programs with fewer bugs a nd more eﬃcient if created in a collaborative
+model.
+Othercollaborationmodelsmaybeexploredinsoftwaredeve lopment.Inthe"sketchmodel,"theprogrammer
+outlines theprogram’sstructure andtheAIﬁllsin thegaps.Wh iletoolslikeGitHubCopilot(basedontheGPT
+technology) currently seem to ﬁt this model [7], we believe the y have a limited role, acting on a function-by-
+function basis rather than holistically (i.e., "I will creat e this class because it will be useful in N other parts of
+the program").
+In the "inverted control model," the communication direction i s reversed: the AI asks the programmer what
+they intend to dountil it objectively understands thegoaland const raints beforeimplementation.
+All of these models require a rethinking of the software develo pment cycle. Programmersare already accus-
+tomed to "boosting"their eﬃciency through a "query model"whe re they simply ask questions to the computer
+(e.g.,Stack Overﬂow).The initial reaction to toolslike Cha tGPThas beento transpose this model- when infor-
+mationislacking,theprogrammerasksChatGPTinasimilar ma nnertothequerytheywouldmakeonGoogle
+or Stack Overﬂow. But is this the most eﬃcient model? In this mo del, the programmer still does most of the
+typing, wasting the potential gainsthat a true programmer-centa urcanhave.
+3 THEROLE OF UNIVERSITIES
+If these new modelsare to profoundly transform the software dev elopment industry, that transformation must
+begin in universities, where future programmers are being edu cated. Universities should start exploring and
+integrating these new collaboration models into their software development curricula to prepare the future
+workforce for a more eﬃcient and productive programming environm ent. It is not enough to prepare future
+programmers,theymust prepare future centaur programmers.
+We believe that this transformation will be gradual and experi mental. In the ﬁrst phase, we will have the
+modelofthe "virtual tutor",where the student uses AIto help themlearn.Thistutor canexplain to thestudent
+what a certain piece of code doesor what a particular error me ans. It can help them verify if a certain solution
+is correct or propose improvements to the code developed by th e student. It can even convert a program to
+diﬀerent programming languages. In any case, we are talking about a learning-centered process - the student
+wantstoknowmoreandAIhelpstheminthisprocess,complementing theroleoftheteacher.Afterall,theideaThe centaurprogrammer- HowKasparov’sAdvanced Chess span s overto theso/f_tware developmentof the future • 3
+of havingapersonaltutor dedicatedto eachstudent would haves eemedutopian until recentlydueto thecosts
+it would entail. Not anymorewith AI.
+Butthe"virtualtutor"model,whileimportant,hasnothingtod owiththeideaofthecentaur-programmer,as
+the objectives are diﬀerent. The centaur-programmersaim to a ugment their ability throughcollaboration with
+AI. This can translate into greater eﬃciency (producing solutio ns more quickly than they would without AI)
+and/or greater quality (producing solutions of better quality than they would alone). Returning to the initial
+concept of"centaurchess",the goalwasto win the game,not so mu chto learnto playchess.
+Therefore, a second phase will emerge in which students actual ly learn to augment their abilities with the
+help of AI.The analogyof the scientiﬁc calculator hasbeen wid ely used and seemsappropriate. Thecalculator
+aloneisoflittleusebecauseitdoesnotknowwhichcalculations toperform.Andthehumanaloneisineﬃcient
+becauseittakestoolongtoperformcertaincalculations.Ahu manequippedwithacalculatoris,infact,acentaur
+that uses a collaborationmodelacceptedin theacademicwor ld.
+Is this analogy valid? A calculator simply reproduces the sam e mechanical process as a student performing
+mathematicaloperations(albeitmuchmorequickly).Howeve r,toolslikeChatGPTcancreatenewcontentfrom
+a set of interactions. Students can abuse these tools to solve co mplete programming exercises without actually
+knowing how to program. This has even led several universities t o simply ban/prohibit the use of these tools
+[5].But if the industry is massively adopting theuse ofthese t oolsdue tothe potential increase in productivity
+that results from it,shouldn’t universities follow the samep ath?
+Returning to the analogy,there is a key point that remains valid. B oth the calculatorand ChatGPT (or other
+formsofAI)aredependent onahumantoproducesomethinguseful .Infact,the level ofusefulnessthat canbe
+extracted from these toolsdepends directly on the ability of the humanusing them. An advanced mathematics
+studentcancertainlyuseascientiﬁccalculatormoreeﬀective lyandusefullythanaprimaryschoolstudent-here
+we use the term "useful" to refer to the ability to solve a real problem rather than just solve academic exercises.
+Thesamegoesforexperiencedprogrammerswhowillusetheira nalyticalandcreativeabilitytocreateprograms
+that solve real problems.Thepiecesthat makeupthese progr amsmaybedeveloped byAI,but knowingwhich
+piecesto build andhow toconnectthemwill continue to betheexclu sive responsibility ofthehuman.Ifit was
+already clear that universities should invest more in develop ing these capabilities, it now becomes even more
+evident.
+4 LEGALAND ETHICALIMPLICATIONS
+Therehasbeenmuchdiscussionabouttheethicalandlegalimp licationsofusingAIasatool,particularlywithin
+thesubset ofAIbasedonLLMs,asit istrainedonlargequantiti es ofinformationgeneratedbyhumans.On the
+one hand, the unauthorized use of content raises legal questions. O n the other hand, it introduces biases that
+replicate patterns ofbehavior in society andmaylead to racis m,xenophobia,or othertypesof discrimination.
+Here, too, the ﬁgure of the centaur programmer is important as i t assumes prior (human) validation of the
+content produced by AI. This validation derives from an assump tion that seems essential to us: the content
+producedbyacollaborationbetweenhumansandAIshouldultim atelybethesoleresponsibilityofhumans.For
+example, humans may prefer to use LLMs trained on a dataset prev iously curated by them to ensure that: (1)
+therearenolegalproblemswiththeunauthorizeduseofcontent; (2)thereisnoincorrectorbiasedinformation
+feedingthe training engine.
+Inthiscontext,Universities alsoplayacriticalroleindeve lopingandopenlydiscussingtheethicalguidelines
+for the use of AI technologies. It makes sense for universities t o host and train their own LLMs, based on data
+produced by the university itself or previously curated by it , making sure it adheres to the previously deﬁned
+guidelines.4 • Pedro Alvesand BrunoPereiraCipriano
+5 CONCLUSION
+Centaur-programmersarecoming.Theywillbehumansabletoaug menttheirprogrammingabilities bycollab-
+oratingwithAI.Theywillaccomplishthesoftwarerequireme ntsmuchfasterandwithbetterqualitythantheir
+solehumancounterparts.Theywillbetrainedbytheiruniversi tytoexplorediﬀerentcollaborationmodelswith
+AI, such as the guidance and the sketch model. They will also hav e a strong critical spirit and highly ethical
+values that will act as a safeguard to the content produced by AI . Because, in the end, the code may have been
+created byAI but itsthe humanprogrammerwhowill take respo nsibility forit.
+REFERENCES
+[1] Nicky Case.2018. How ToBecome A Centaur. Journal ofDesignand Science (Jan. 2018). https://doi.org/10.21428/61b2215c
+[2] James Finnie-Ansley,Paul Denny,Brett A.Becker,AndrewLuxton-R eilly,andJames Prather.2022. TheRobots AreComing: Exploring
+theImplicationsofOpenAICodexonIntroductoryProgramming.In AustralasianComputingEducationConference .ACM,VirtualEvent
+Australia,10–19. https://doi.org/10.1145/3511861.35118 63
+[3] Demis Hassabis. 2017. Artiﬁcial Intelligence: Chess match of th e century. Nature544, 7651 (April 2017), 413–414.
+https://doi.org/10.1038/544413a Number:7651Publisher:N ature PublishingGroup.
+[4] DouglasHeaven.2018.Thedesignerchangingthewayaircraftare built. https://www.bbc.com/future/article/20181129-the -ai-transforming-the-way-aircraft-are-built
+[5] Kayla Jimenez. 2023. ’This shouldn’t be a surprise’ The educat ion community shares mixed reactions to ChatGPT.
+https://www.usatoday.com/story/news/education/2023/01/ 30/chatgpt-going-banned-teachers-sound-alarm-new-ai-tech/1 1069593002/
+[6] OpenAI.2023. GPT-4 Technical Report. https://doi.org/10. 48550/arXiv.2303.08774 arXiv:2303.08774[cs].
+[7] Sida Peng, Eirini Kalliamvakou, Peter Cihon, and Mert Demirer. 2023 . The Impact of AI on Developer Productivity: Evidence from
+GitHub Copilot. http://arxiv.org/abs/2302.06590 arXiv:2302 .06590[cs].

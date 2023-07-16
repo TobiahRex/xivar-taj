@@ -1,0 +1,9 @@
+{
+    "arxiv_number": "2306.14893",
+    "images": {},
+    "new_root": "downloads/LongCoder-A_Long-Range_Pre-trained_Language_Model_for_Code_Completion",
+    "pages": 10,
+    "pdf_filename": "downloads/2306.14893/2306.14893.pdf",
+    "size": 46037,
+    "title": "LongCoder: A Long-Range Pre-trained Language Model for Code Completion"
+}

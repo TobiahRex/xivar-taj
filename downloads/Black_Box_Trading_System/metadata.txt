@@ -1,0 +1,9 @@
+{
+    "arxiv_number": "Black_Box_Trading_System",
+    "images": {},
+    "new_root": "downloads/Black",
+    "pages": 11,
+    "pdf_filename": "downloads/Black_Box_Trading_System/Black_Box_Trading_System.pdf",
+    "size": 25828,
+    "title": "Black"
+}

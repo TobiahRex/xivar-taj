@@ -1,0 +1,54 @@
+{
+    "arxiv_number": "2206.14932",
+    "images": {
+        "image_1.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_1/image_1.png"
+        },
+        "image_10.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_10.png"
+        },
+        "image_11.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_5/image_11.png"
+        },
+        "image_2.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_2/image_2.png"
+        },
+        "image_3.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_3/image_3.png"
+        },
+        "image_4.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_3/image_4.png"
+        },
+        "image_5.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_5.png"
+        },
+        "image_6.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_6.png"
+        },
+        "image_7.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_7.png"
+        },
+        "image_8.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_8.png"
+        },
+        "image_9.png": {
+            "caption": "",
+            "image_path": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A/images/page_4/image_9.png"
+        }
+    },
+    "new_root": "downloads/A_Data_Science_Pipeline_for_Algorithmic_Trading-A",
+    "pages": 6,
+    "pdf_filename": "downloads/2206.14932/2206.14932",
+    "size": 24927,
+    "title": "A Data Science Pipeline for Algorithmic Trading: A"
+}
