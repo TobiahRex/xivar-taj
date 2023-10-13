@@ -1,5 +1,6 @@
 # _Xivar_-Taj
-### A simple Python script to extract the key ideas from an arxiv.org PDF file and...
+### WHAT
+A simple Python script to extract the key ideas from an [arxiv.org](https://arxiv.org/) PDF Paper and:
 - generate a mental model of the information (mermaid)
 - with generative psuedo code (python)
 - and example code snippets

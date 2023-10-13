@@ -1,0 +1,9 @@
+{
+    "arxiv_number": "2110.05299",
+    "images": {},
+    "new_root": "downloads/An_Automated_Portfolio_Trading_System_with_Feature",
+    "pages": 8,
+    "pdf_filename": "downloads/2110.05299/2110.05299.pdf",
+    "size": 44381,
+    "title": "An Automated Portfolio Trading System with Feature"
+}

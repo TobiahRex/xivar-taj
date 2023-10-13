@@ -54,6 +54,7 @@ def get_data_by_url(url):
         metadata = json.load(f)
     return arxiv_dir, arxiv_number, metadata
 
+
 def get_metadata_by_folder(folder):
     metadata_filename = os.path.join(folder, "metadata.txt")
     metadata = {}
@@ -525,7 +526,9 @@ class ElevenLabs:
         set_api_key(os.environ.get("ELEVENLABS_API_KEY", ""))
         return ElevenLabs()
 
-    def tts(self, text="Hi my name is Toby, nice to meet you.", output_filename="output.mp3"):
+    def tts(
+        self, text="Hi my name is Toby, nice to meet you.", output_filename="output.mp3"
+    ):
         # audio = generate(text, voice="Adam", model="eleven_monolingual_v1")
         # play(audio)
         url = self.url.replace("<voice-id>", "pNInz6obpgDQGcFmaJgB")
@@ -568,9 +571,9 @@ class ElevenLabs:
                 f.write(json.dumps(metadata, indent=4))
 
     def transcribe(self, folder):
-        file_name = folder.split('/')[-1]
+        file_name = folder.split("/")[-1]
         audio_folder = os.path.join(folder, "audio")
-        lite_summary = os.path.join(folder, 'lite.md')
+        lite_summary = os.path.join(folder, "lite.md")
         if os.path.exists(lite_summary):
             f = open(lite_summary, "r")
             text = f.read()
@@ -582,7 +585,7 @@ class ElevenLabs:
                 os.mkdir(audio_folder)
 
             for i in range(num_chunks):
-                chunk_text = text[i * chunk_size: (i + 1) * chunk_size]
+                chunk_text = text[i * chunk_size : (i + 1) * chunk_size]
                 audio_filename = os.path.join(folder, "audio", f"{file_name}_{i}.mp3")
                 self.tts(chunk_text, audio_filename)
 
